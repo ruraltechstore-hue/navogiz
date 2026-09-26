@@ -1,0 +1,218 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from "@tanstack/react-router";
+import { AlertTriangle, Check, CheckCircle2 } from "lucide-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { SectionHeading } from "@/components/marketing";
+import { QrPaymentDone, QrPaymentView, postJson } from "@/components/qr-payment";
+import { logisticsPlans, logisticsPricingNotice, type LogisticsPlan } from "@/lib/logistics-plans";
+import { cn } from "@/lib/utils";
+
+const customerSchema = z.object({
+  customerName: z.string().trim().min(2, "Enter your full name").max(100),
+  customerEmail: z.string().trim().email("Enter a valid email address").max(255),
+  customerPhone: z.string().trim().regex(/^[0-9+\-\s()]{7,20}$/, "Enter a valid mobile number"),
+});
+type CustomerData = z.infer<typeof customerSchema>;
+
+type Stage =
+  | { kind: "form" }
+  | { kind: "processing" }
+  | { kind: "success"; plan: string; priceLabel: string; paymentId: string }
+  | { kind: "failed" }
+  | { kind: "cancelled" }
+  | { kind: "qr"; referenceId: string }
+  | { kind: "qr-done"; referenceId: string };
+
+
+
+export function LogisticsPlansSection() {
+  const [activePlan, setActivePlan] = useState<LogisticsPlan | null>(null);
+  const [stage, setStage] = useState<Stage>({ kind: "form" });
+
+  function openPlan(plan: LogisticsPlan) {
+    setActivePlan(plan);
+    setStage({ kind: "form" });
+  }
+
+  return (
+    <section id="franchise-plans" className="scroll-mt-24 bg-surface py-20 md:py-28">
+      <div className="section-shell">
+        <SectionHeading
+          eyebrow="Logistics Franchise Plans"
+          title="Franchise Plans & Opportunities"
+          description="NAVOGIZ Innovative Solutions provides opportunities to explore franchise-based logistics and business service models through the available plans."
+        />
+        <div className="mt-12 grid gap-6 lg:grid-cols-3">
+          {logisticsPlans.map((plan) => (
+            <article
+              key={plan.id}
+              className={cn(
+                "rise-in relative flex h-full flex-col border bg-card p-7 shadow-sm transition-transform duration-300 hover:-translate-y-1",
+                plan.popular ? "border-accent-strong shadow-md" : "border-border",
+              )}
+            >
+              {plan.popular && (
+                <span className="absolute right-6 top-6 bg-accent-strong px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-primary-foreground">
+                  Popular
+                </span>
+              )}
+              <h3 className="max-w-[70%] font-display text-xl font-bold text-card-foreground">{plan.name}</h3>
+              <p className="mt-3 font-display text-4xl font-bold text-foreground">{plan.priceLabel}</p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Total franchise price · INR</p>
+              <ul className="mt-6 grid gap-3">
+                {plan.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+                    <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground">
+                      <Check className="size-3" />
+                    </span>
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+              <Button variant={plan.popular ? "accent" : "outline"} size="lg" className="mt-8 w-full" onClick={() => openPlan(plan)}>
+                Register Now
+              </Button>
+            </article>
+          ))}
+        </div>
+        <p className="mt-10 max-w-4xl border-l-4 border-accent-strong bg-card p-5 text-sm leading-7 text-muted-foreground">
+          {logisticsPricingNotice}
+        </p>
+      </div>
+
+      <Dialog open={activePlan !== null} onOpenChange={(open) => !open && setActivePlan(null)}>
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+          {activePlan && <PlanCheckout plan={activePlan} stage={stage} setStage={setStage} onClose={() => setActivePlan(null)} />}
+        </DialogContent>
+      </Dialog>
+    </section>
+  );
+}
+
+function PlanCheckout({
+  plan,
+  stage,
+  setStage,
+  onClose,
+}: {
+  plan: LogisticsPlan;
+  stage: Stage;
+  setStage: (stage: Stage) => void;
+  onClose: () => void;
+}) {
+  const [error, setError] = useState<string>();
+  const [formValues, setFormValues] = useState<CustomerData>();
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CustomerData>({
+    resolver: zodResolver(customerSchema),
+  });
+
+  async function startQrPayment(values: CustomerData) {
+    setError(undefined);
+    try {
+      const result = await postJson("/api/public/register-qr-payment", { plan: plan.id, ...values });
+      setFormValues(values);
+      setStage({ kind: "qr", referenceId: result["referenceId"] as string });
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Could not save your details. Please try again.");
+    }
+  }
+
+
+  if (stage.kind === "success") {
+    return (
+      <div className="text-center">
+        <CheckCircle2 className="mx-auto size-10 text-accent-foreground" />
+        <DialogHeader className="mt-4">
+          <DialogTitle className="text-center font-display text-2xl">Payment Successful</DialogTitle>
+          <DialogDescription className="text-center">Thank you for registering with NAVOGIZ Innovative Solutions.</DialogDescription>
+        </DialogHeader>
+        <dl className="mt-6 grid gap-2 border border-border bg-surface p-5 text-left text-sm">
+          <Row label="Plan" value={stage.plan} />
+          <Row label="Amount Paid" value={stage.priceLabel} />
+          <Row label="Payment ID" value={stage.paymentId} />
+        </dl>
+        <p className="mt-5 text-sm leading-7 text-muted-foreground">
+          Your payment has been successfully received. Our team will contact you regarding the next steps.
+        </p>
+        <Button asChild variant="accent" size="lg" className="mt-6 w-full"><Link to="/">Back to Home</Link></Button>
+      </div>
+    );
+  }
+
+  if (stage.kind === "qr") {
+    return (
+      <QrPaymentView
+        planLabel={plan.name}
+        priceLabel={plan.priceLabel}
+        customerName={formValues?.customerName ?? ""}
+        referenceId={stage.referenceId}
+        onBack={() => setStage({ kind: "form" })}
+        onDone={() => setStage({ kind: "qr-done", referenceId: stage.referenceId })}
+      />
+    );
+  }
+
+  if (stage.kind === "qr-done") {
+    return <QrPaymentDone planLabel={plan.name} priceLabel={plan.priceLabel} referenceId={stage.referenceId} />;
+  }
+
+  if (stage.kind === "failed" || stage.kind === "cancelled") {
+    const cancelled = stage.kind === "cancelled";
+    return (
+      <div className="text-center">
+        <AlertTriangle className="mx-auto size-10 text-destructive" />
+        <DialogHeader className="mt-4">
+          <DialogTitle className="text-center font-display text-2xl">{cancelled ? "Payment Cancelled" : "Payment Failed"}</DialogTitle>
+          <DialogDescription className="text-center">
+            {cancelled ? "Your payment was not completed." : "Your payment could not be completed. Please try again."}
+          </DialogDescription>
+        </DialogHeader>
+        <Button variant="accent" size="lg" className="mt-6 w-full" onClick={() => setStage({ kind: "form" })}>Try Again</Button>
+        <Button variant="link" className="mt-2 w-full" onClick={onClose}>Close</Button>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <DialogHeader>
+        <DialogTitle className="font-display text-2xl">{plan.name} — {plan.priceLabel}</DialogTitle>
+        <DialogDescription>Enter your details to continue to secure payment.</DialogDescription>
+      </DialogHeader>
+      <form className="mt-5 grid gap-4" noValidate onSubmit={handleSubmit(startQrPayment)}>
+        <Field label="Full Name" error={errors.customerName?.message}>
+          <Input {...register("customerName")} className="h-11 bg-card" placeholder="Your full name" autoComplete="name" />
+        </Field>
+        <Field label="Email Address" error={errors.customerEmail?.message}>
+          <Input {...register("customerEmail")} type="email" className="h-11 bg-card" placeholder="name@example.com" autoComplete="email" />
+        </Field>
+        <Field label="Mobile Number" error={errors.customerPhone?.message}>
+          <Input {...register("customerPhone")} type="tel" className="h-11 bg-card" placeholder="Mobile number" autoComplete="tel" />
+        </Field>
+        {error && <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">{error}</p>}
+        <Button
+          type="submit"
+          variant="accent"
+          size="lg"
+          className="w-full"
+          disabled={isSubmitting || stage.kind === "processing"}
+        >
+          {isSubmitting || stage.kind === "processing" ? "Saving registration…" : "Pay via QR Code (UPI)"}
+        </Button>
+      </form>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return <div className="flex items-start justify-between gap-4"><dt className="text-muted-foreground">{label}</dt><dd className="text-right font-semibold text-foreground">{value}</dd></div>;
+}
+
+function Field({ label, error, children }: { label: string; error: string | undefined; children: React.ReactNode }) {
+  return <div><label className="mb-2 block text-sm font-semibold text-foreground">{label}</label>{children}{error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}</div>;
+}
