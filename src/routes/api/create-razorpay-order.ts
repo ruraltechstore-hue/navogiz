@@ -30,7 +30,7 @@ export const Route = createFileRoute("/api/create-razorpay-order")({
         if (!plan) {
           return Response.json({ error: "The selected plan is not available." }, { status: 400 });
         }
-        const isInternship = plan.id === "internship-stage-1" || plan.id === "internship-stage-2";
+        const isInternship = (plan as any).id === "internship-stage-1" || (plan as any).id === "internship-stage-2";
         if (isInternship && (!result.data.college || !result.data.course)) {
           return Response.json({ error: "Please enter your college and course details." }, { status: 400 });
         }
@@ -70,7 +70,7 @@ export const Route = createFileRoute("/api/create-razorpay-order")({
           customerPhone: result.data.customerPhone,
           ...(result.data.college ? { college: result.data.college } : {}),
           ...(result.data.course ? { course: result.data.course } : {}),
-          ...(isInternship && "registrationLabel" in plan ? { internshipStage: plan.registrationLabel } : {}),
+          ...(isInternship && "registrationLabel" in (plan as any) ? { internshipStage: (plan as any).registrationLabel } : {}),
           plan: plan.name,
           amountPaise: plan.amountPaise,
           currency: "INR",
@@ -89,7 +89,7 @@ export const Route = createFileRoute("/api/create-razorpay-order")({
           customerPhone: result.data.customerPhone,
           ...(result.data.college ? { college: result.data.college } : {}),
           ...(result.data.course ? { course: result.data.course } : {}),
-          ...(isInternship && "registrationLabel" in plan ? { internshipStage: plan.registrationLabel } : {}),
+          ...(isInternship && "registrationLabel" in (plan as any) ? { internshipStage: (plan as any).registrationLabel } : {}),
           plan: plan.name,
           priceLabel: plan.priceLabel,
           reference: order.id,

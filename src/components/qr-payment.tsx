@@ -31,48 +31,50 @@ export function QrPaymentView({
   onDone: () => void;
 }) {
   return (
-    <div className="text-center">
-      <QrCode className="mx-auto size-10 text-secondary" />
-      <DialogHeader className="mt-4">
-        <DialogTitle className="text-center font-display text-2xl">Scan &amp; Pay with any UPI App</DialogTitle>
-        <DialogDescription className="text-center">
-          Registration details saved for {customerName}. Complete your payment using the QR code below.
-        </DialogDescription>
-      </DialogHeader>
+    <div className="flex flex-col md:flex-row gap-8 items-center md:items-start text-left">
+      <div className="flex-1 w-full flex flex-col justify-center">
+        <DialogHeader>
+          <div className="flex items-center gap-3">
+            <QrCode className="size-8 text-secondary" />
+            <DialogTitle className="font-display text-2xl">Scan &amp; Pay</DialogTitle>
+          </div>
+          <DialogDescription className="mt-2 text-left">
+            Details saved for <span className="font-semibold text-foreground">{customerName}</span>. Complete your payment via any UPI app.
+          </DialogDescription>
+        </DialogHeader>
 
-      <dl className="mt-6 grid gap-2 border border-border bg-surface p-5 text-left text-sm">
-        <div className="flex items-start justify-between gap-4">
-          <dt className="text-muted-foreground">Plan</dt>
-          <dd className="text-right font-semibold text-foreground">{planLabel}</dd>
-        </div>
-        <div className="flex items-start justify-between gap-4">
-          <dt className="text-muted-foreground">Amount to Pay</dt>
-          <dd className="text-right font-semibold text-foreground">{priceLabel}</dd>
-        </div>
-        <div className="flex items-start justify-between gap-4">
-          <dt className="text-muted-foreground">Reference ID</dt>
-          <dd className="text-right font-semibold text-foreground">{referenceId}</dd>
-        </div>
-      </dl>
+        <dl className="mt-6 grid gap-3 border border-border bg-surface p-5 text-sm rounded-lg">
+          <div className="flex justify-between gap-4">
+            <dt className="text-muted-foreground">Plan</dt>
+            <dd className="text-right font-semibold text-foreground">{planLabel}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-muted-foreground">Amount to Pay</dt>
+            <dd className="text-right font-semibold text-foreground">{priceLabel}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-muted-foreground">Reference ID</dt>
+            <dd className="text-right font-semibold text-primary">{referenceId}</dd>
+          </div>
+        </dl>
 
-      <div className="mx-auto mt-6 max-w-xs overflow-hidden rounded-lg border border-border shadow-sm">
-        <img src="/Qr-razorpay.jpeg" alt="NestMate UPI payment QR code — powered by Razorpay" className="w-full" />
+        <p className="mt-4 text-xs leading-5 text-muted-foreground">
+          Please mention your Reference ID <span className="font-semibold text-foreground">{referenceId}</span> in the payment note so our team can verify your registration.
+        </p>
+
+        <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <Button variant="accent" size="lg" className="w-full" onClick={onDone}>
+            I Have Paid
+          </Button>
+          <Button variant="outline" size="lg" className="w-full" onClick={onBack}>
+            Back
+          </Button>
+        </div>
       </div>
 
-      <p className="mt-5 text-sm leading-7 text-muted-foreground">
-        Scan the QR code with GPay, PhonePe, Paytm, or any UPI app and pay the exact amount of{" "}
-        <span className="font-semibold text-foreground">{priceLabel}</span> — no need to enter it yourself.
-        Please mention your name and Reference ID{" "}
-        <span className="font-semibold text-foreground">{referenceId}</span> in the payment note so our
-        team can verify and confirm your registration.
-      </p>
-
-      <Button variant="accent" size="lg" className="mt-5 w-full" onClick={onDone}>
-        I Have Completed the Payment
-      </Button>
-      <Button variant="link" className="mt-2 w-full" onClick={onBack}>
-        Back to payment options
-      </Button>
+      <div className="w-full md:w-[320px] shrink-0 overflow-hidden rounded-xl border-2 border-border shadow-md">
+        <img src="/Qr-razorpay.jpeg" alt="UPI payment QR code" className="w-full h-auto" />
+      </div>
     </div>
   );
 }

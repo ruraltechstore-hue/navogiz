@@ -7,11 +7,67 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteShell } from "@/components/site-shell";
+import { CustomCursor } from "@/components/Cursor";
+import Lenis from "lenis";
+
+function Preloader() {
+  const [progress, setProgress] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let currentProgress = 0;
+    const interval = setInterval(() => {
+      currentProgress += Math.floor(Math.random() * 10) + 5;
+      if (currentProgress >= 100) {
+        setProgress(100);
+        clearInterval(interval);
+        setTimeout(() => setLoading(false), 600);
+      } else {
+        setProgress(currentProgress);
+      }
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (loading) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  }, [loading]);
+
+  return (
+    <AnimatePresence>
+      {loading && (
+        <motion.div
+          className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, scale: 1.05 }}
+          transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+        >
+          <div className="font-display text-7xl font-black text-foreground md:text-9xl">
+            {progress}%
+          </div>
+          <div className="mt-8 h-1 w-64 overflow-hidden rounded-full bg-border">
+            <motion.div
+              className="h-full bg-primary"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.1 }}
+            />
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
 
 function NotFoundComponent() {
   return (
@@ -113,8 +169,33 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: "vertical",
+      gestureOrientation: "vertical",
+      smoothWheel: true,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+    });
+
+    function raf(time: number) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
+      <Preloader />
+      <CustomCursor />
       <SiteShell><Outlet /></SiteShell>
     </QueryClientProvider>
   );

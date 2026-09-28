@@ -1,252 +1,466 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import {
-  ArrowDown,
-  ArrowRight,
-  ArrowUpRight,
-  Boxes,
-  Building2,
-  GraduationCap,
-  Handshake,
-  HeartHandshake,
-  Route as RouteIcon,
-  Store,
-  Target,
-  Users,
-  Workflow,
-} from "lucide-react";
+import { ArrowDown, ArrowRight, MousePointerClick, MoveUpRight, Navigation, Target, Zap } from "lucide-react";
+import { useEffect, useState, useRef } from "react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import CloudSky from "@/components/originkit/ui/cloud-sky";
+import FolderFloat from "@/components/FolderFloat";
 
-import { Button } from "@/components/ui/button";
-import { CTASection, IconCard, SectionHeading } from "@/components/marketing";
-import { services } from "@/config/site";
-
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "NAVOGIZ Innovative Solutions | Sales & Business Growth Solutions" },
-      {
-        name: "description",
-        content:
-          "NAVOGIZ Innovative Solutions provides SaaS, logistics, educational sales, lead generation, and business development solutions to help businesses grow.",
-      },
-      { property: "og:title", content: "NAVOGIZ Innovative Solutions | Sales & Business Growth Solutions" },
-      {
-        property: "og:description",
-        content: "Industry-focused sales and business development support for sustainable growth.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "/" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/" }],
-  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
-  const serviceLinks = [
-    "/services/saas-sales",
-    "/services/logistics-sales",
-    "/services/educational-services",
-    "/services/rural-tech-store",
-  ] as const;
-
   return (
-    <>
-      <section className="relative min-h-[680px] overflow-hidden bg-hero text-hero-foreground lg:min-h-[760px]">
-        {/* The user will place their 2MB video as public/hero-video.mp4 */}
-        <video
-          src="/hero-video.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="absolute inset-0 h-full w-full object-cover object-center lg:object-right opacity-80"
-        />
-        <div className="section-shell relative flex min-h-[680px] items-center py-20 lg:min-h-[760px]">
-          <div className="rise-in max-w-4xl">
-            <div className="flex items-center gap-3 text-xs font-bold uppercase tracking-[0.18em] text-[#C57526]">
-              <span>{new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase()}</span>
-            </div>
-            
-            <p className="mt-8 text-xs sm:text-sm font-semibold tracking-widest text-black/60 uppercase">
-              SALES • BUSINESS DEVELOPMENT • GROWTH
-            </p>
-            
-            <h1 className="mt-4 font-display text-5xl font-bold leading-[1.05] text-black md:text-7xl lg:text-[5rem]">
-              Smarter Sales.<br/>Stronger <span>Growth.</span>
-            </h1>
-            
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-black/70 md:text-xl">
-              Connecting businesses with customers, opportunities and lasting partnerships.
-            </p>
-            
-            <div className="mt-10 flex flex-wrap gap-4">
-              <Button asChild size="lg" className="bg-[#4a2e15] px-8 text-white hover:bg-[#382310]">
-                <Link to="/partner">
-                  Partner With Us <ArrowRight className="ml-2 size-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" className="border-black/30 bg-transparent text-black hover:bg-black/5 px-8">
-                <Link to="/services">
-                  Explore Services <ArrowUpRight className="ml-2 size-4" />
-                </Link>
-              </Button>
-            </div>
-          </div>
-          
-          <div className="absolute bottom-8 left-0 w-full animate-bounce text-center text-xs font-bold uppercase tracking-widest text-black/60">
-            SCROLL TO EXPLORE <ArrowDown className="mx-auto mt-2 size-4" />
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 md:py-28">
-        <div className="section-shell">
-          <SectionHeading
-            eyebrow="Why NAVOGIZ Innovative Solutions"
-            title="Your Growth. Our Sales Expertise."
-            description="From generating qualified opportunities to building meaningful customer relationships, we work alongside businesses to create scalable and effective sales strategies."
-          />
-          <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {[
-              { icon: Target, title: "Industry-Focused Expertise", text: "Specialized sales solutions across SaaS, logistics, and education." },
-              { icon: Users, title: "Customer-Centric Approach", text: "We focus on understanding customer needs and creating meaningful connections." },
-              { icon: RouteIcon, title: "Growth-Oriented Strategy", text: "Our approach helps businesses expand their customer base and market presence." },
-              { icon: Handshake, title: "Long-Term Partnerships", text: "We aim to build lasting relationships with businesses and their customers." }
-            ].map((feature, i) => (
-              <div key={i} className="group relative overflow-hidden rounded-3xl border border-border bg-card p-8 shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-primary/30 hover:shadow-xl">
-                <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-primary/5 transition-transform duration-700 group-hover:scale-[2.5] group-hover:bg-primary/10" />
-                <div className="relative z-10 flex size-14 items-center justify-center rounded-2xl bg-surface transition-colors duration-500 group-hover:bg-primary">
-                  <feature.icon className="size-6 text-primary transition-colors duration-500 group-hover:text-white" />
-                </div>
-                <div className="relative z-10 mt-8 h-1 w-8 rounded-full bg-border transition-all duration-500 group-hover:w-16 group-hover:bg-primary" />
-                <h3 className="relative z-10 mt-6 font-display text-xl font-bold">{feature.title}</h3>
-                <p className="relative z-10 mt-3 text-sm leading-7 text-muted-foreground">{feature.text}</p>
-                <div className="absolute inset-0 z-0 bg-gradient-to-br from-transparent to-primary/[0.03] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-surface py-20 md:py-28">
-        <div className="section-shell">
-          <SectionHeading eyebrow="Our Services" title="Solutions Designed for Business Growth" align="center" />
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {services.map((service, index) => {
-              const icons = [Boxes, Building2, GraduationCap, Store];
-              const Icon = icons[index] ?? Boxes;
-              const bgs = [
-                "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1580674285054-bed31e145f59?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=800&q=80",
-                "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=800&q=80"
-              ];
-              const bgImage = bgs[index] ?? bgs[0];
-              return (
-                <article
-                  key={service.title}
-                  className="rise-in group relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-xl border border-border shadow-sm transition-transform duration-300 hover:-translate-y-1"
-                >
-                  <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: `url(${bgImage})` }} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/20" />
-                  <div className="relative z-10 flex h-full flex-col p-7">
-                    <span className="grid size-12 place-items-center rounded-md bg-primary text-primary-foreground">
-                      <Icon />
-                    </span>
-                    <h3 className="mt-8 font-display text-2xl font-bold text-white">{service.title}</h3>
-                    <div className="mt-3 min-h-12">
-                      {"subtitle" in service && (
-                        <p className="text-sm font-semibold leading-6 text-white/80">{service.subtitle}</p>
-                      )}
-                    </div>
-                    <p className="mt-3 text-sm leading-7 text-white/70">{service.description}</p>
-                    <Button asChild variant="link" className="mt-auto h-auto justify-start px-0 pt-6 text-white hover:text-white/80">
-                      <Link to={serviceLinks[index] as (typeof serviceLinks)[number]}>
-                        Learn More <ArrowRight className="ml-2 size-4" />
-                      </Link>
-                    </Button>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-          <div className="mt-10 text-center">
-            <Button asChild variant="outline" size="lg">
-              <Link to="/services">
-                View All Services <ArrowRight />
-              </Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-20 md:py-28">
-        <div className="section-shell">
-          <SectionHeading eyebrow="How We Work" title="A Simple Approach to Better Sales" />
-          <div className="mt-12 grid gap-px overflow-hidden border border-border bg-border md:grid-cols-2 lg:grid-cols-4">
-            <IconCard icon={Users} index="01" title="Understand">
-              Understand your business, target market, products, and sales objectives.
-            </IconCard>
-            <IconCard icon={Workflow} index="02" title="Strategize">
-              Develop a sales approach aligned with your business goals.
-            </IconCard>
-            <IconCard icon={HeartHandshake} index="03" title="Connect">
-              Engage potential customers and create meaningful business opportunities.
-            </IconCard>
-            <IconCard icon={Target} index="04" title="Grow">
-              Build sustainable customer relationships and support long-term growth.
-            </IconCard>
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-hero py-20 text-hero-foreground md:py-24">
-        <div className="section-shell">
-          <div className="max-w-2xl">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-accent-strong">Industries We Serve</p>
-            <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">
-              Focused expertise where sales relationships matter.
-            </h2>
-          </div>
-          <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-            <Industry icon={Boxes} title="SaaS" bgImage="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=80">
-              Helping technology companies reach and convert potential customers.
-            </Industry>
-            <Industry icon={Building2} title="Logistics" bgImage="https://images.unsplash.com/photo-1580674285054-bed31e145f59?auto=format&fit=crop&w=600&q=80">
-              Connecting logistics businesses with potential clients and business opportunities.
-            </Industry>
-            <Industry icon={GraduationCap} title="Education" bgImage="https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=600&q=80">
-              Supporting educational and training organizations in reaching learners and customers.
-            </Industry>
-            <Industry icon={Store} title="Rural Tech Store Services" bgImage="https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80">
-              Bringing essential digital services and entrepreneurship opportunities to rural and semi-urban
-              communities.
-            </Industry>
-          </div>
-        </div>
-      </section>
-      <CTASection />
-    </>
+    <div className="relative w-full bg-background">
+      <HeroSection />
+      <IntroSection />
+      <ServicesSection />
+      <ScrollStorySection />
+      <CapabilitiesSection />
+      <WhyNavogizSection />
+      <ProcessSection />
+      <BigCTASection />
+    </div>
   );
 }
 
-function Industry({ icon: Icon, title, children, bgImage }: { icon: typeof Boxes; title: string; children: React.ReactNode; bgImage?: string }) {
+function HeroSection() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
+  const words = ["BUILD", "SELL", "GROW", "MOVE"];
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth - 0.5) * 20,
+        y: (e.clientY / window.innerHeight - 0.5) * 20,
+      });
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, []);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentWordIndex((prev) => (prev + 1) % words.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, [words.length]);
+
   return (
-    <article className="group relative overflow-hidden rounded-2xl border border-border/10 bg-black/60 p-7 shadow-xl backdrop-blur-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-      {bgImage && (
-        <div className="absolute inset-0 z-0 bg-cover bg-center opacity-40 transition-opacity duration-500 group-hover:opacity-50" style={{ backgroundImage: `url(${bgImage})` }} />
-      )}
-      <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/90 to-transparent" />
-      <div className="relative z-20 flex h-full flex-col justify-end">
-        <Icon className="size-8 text-accent-strong" />
-        <h3 className="mt-5 font-display text-2xl font-bold text-white">{title}</h3>
-        <p className="mt-3 text-sm leading-7 text-white/80">{children}</p>
+    <section className="relative h-screen min-h-[700px] w-full overflow-hidden bg-hero">
+      <div className="absolute inset-0 z-0 opacity-100">
+        <CloudSky
+          background="#07111F"
+          baseColor="#1683FF"
+          accentColor="#FFFFFF"
+          density={60}
+          size={80}
+          speed={20}
+          clouds={{ softness: 90, shadow: 120, cirrus: 20 }}
+          sun={{ x: 50, y: 50, glow: "rgba(22, 131, 255, 0.9)" }}
+          pointer={{ parallax: 150, wind: 50, damping: 20 }}
+        />
       </div>
-    </article>
+
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-background/20 to-background" />
+
+      <motion.div
+        className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-center px-6 pointer-events-none"
+        animate={{
+          x: mousePosition.x,
+          y: mousePosition.y
+        }}
+        transition={{ type: "spring", stiffness: 50, damping: 20 }}
+      >
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="mb-6 font-mono text-sm font-bold tracking-[0.2em] text-primary"
+        >
+          NAVOGIZ
+        </motion.p>
+
+        <h1 className="font-display text-5xl font-extrabold leading-[0.95] tracking-tight text-white md:text-7xl lg:text-[7rem]">
+          <span className="block flex flex-wrap items-center">WE <div className="inline-grid w-[220px] sm:w-[300px] md:w-[450px] overflow-hidden ml-2 sm:ml-4">
+            <AnimatePresence mode="popLayout">
+              <motion.span
+                key={words[currentWordIndex]}
+                initial={{ opacity: 0, y: 100 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -100 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="col-start-1 row-start-1 text-primary drop-shadow"
+              >
+                {words[currentWordIndex]}.
+              </motion.span>
+            </AnimatePresence>
+          </div>
+          </span>
+          <span className="block mt-2">MOMENTUM.</span>
+        </h1>
+
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-8 max-w-lg text-lg font-medium leading-relaxed text-white/80 md:text-xl"
+        >
+          Digital growth systems for businesses ready to move.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+          className="mt-12 flex flex-wrap gap-5 pointer-events-auto"
+        >
+          <Link to="/services" className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-white px-8 py-4 font-semibold text-black transition-all hover:scale-105 hover:text-white">
+            <span className="relative z-10 flex items-center gap-2">Explore Services <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
+            <div className="absolute inset-0 z-0 scale-x-0 bg-primary transition-transform duration-500 origin-left group-hover:scale-x-100" />
+          </Link>
+          <Link to="/contact" className="group inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 py-4 font-semibold text-white backdrop-blur-md transition-all hover:bg-white/10 hover:border-white/40">
+            Start a Conversation
+          </Link>
+        </motion.div>
+
+        <div
+          className="pointer-events-none absolute z-20 hidden w-[280px] xl:flex flex-col items-end gap-20"
+          style={{ right: 'clamp(32px, 7vw, 120px)', top: 'clamp(220px, 28vh, 300px)' }}
+        >
+          <div className="translate-x-[20px]">
+            <motion.div
+              className="w-[200px] rounded-[20px] p-4 backdrop-blur-md bg-white/10 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-auto hover:scale-105 transition-transform duration-300 cursor-pointer"
+              animate={{ y: [-10, 10, -10], rotate: [-2, 2, -2] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-white"><Navigation className="size-5" /></div>
+                <div>
+                  <p className="text-[11px] font-semibold text-white/60">Digital Growth</p>
+                  <p className="text-sm font-bold text-white">Accelerated</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="-translate-x-[20px]">
+            <motion.div
+              className="w-[200px] rounded-[20px] p-4 backdrop-blur-md bg-white/10 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-auto hover:scale-105 transition-transform duration-300 cursor-pointer"
+              animate={{ y: [10, -10, 10], rotate: [2, -2, 2] }}
+              transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-white"><Target className="size-5" /></div>
+                <div>
+                  <p className="text-[11px] font-semibold text-white/60">Sales Strategy</p>
+                  <p className="text-sm font-bold text-white">Optimized</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="-translate-x-[80px]">
+            <motion.div
+              className="w-[200px] rounded-[20px] p-4 backdrop-blur-md bg-white/10 border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.1),inset_0_1px_1px_rgba(255,255,255,0.15)] pointer-events-auto hover:scale-105 transition-transform duration-300 cursor-pointer"
+              animate={{ y: [-8, 8, -8], rotate: [-1, 1, -1] }}
+              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-white"><Zap className="size-5" /></div>
+                <div>
+                  <p className="text-[11px] font-semibold text-white/60">Brand Identity</p>
+                  <p className="text-sm font-bold text-white">Elevated</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+
+      </motion.div>
+
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 text-center text-xs font-bold uppercase tracking-widest text-gray-400">
+        <span className="block mb-2">Scroll to explore</span>
+        <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}>
+          <ArrowDown className="mx-auto size-4" />
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function IntroSection() {
+  const { scrollYProgress } = useScroll();
+  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+
+  return (
+    <section className="relative py-32 md:py-48 px-6 bg-background">
+      <div className="mx-auto max-w-7xl flex flex-col md:flex-row gap-12 md:gap-24 items-start">
+        <div className="w-full md:w-1/4">
+          <p className="font-mono text-sm font-bold tracking-widest text-foreground/40 uppercase sticky top-32">
+            What we do
+          </p>
+          <div className="mt-24 sticky top-[65vh] hidden md:block">
+            <motion.div
+              animate={{ y: [-15, 15, -15] }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <FolderFloat
+                items={[
+                  "Accelerated growth",
+                  "AI automation",
+                  "Brand positioning",
+                  "Sales funnels"
+                ]}
+                label="Navogiz Solutions"
+                sublabel="4 core services"
+              />
+            </motion.div>
+          </div>
+        </div>
+        <div className="w-full md:w-3/4">
+          <motion.div
+            initial={{ opacity: 0, filter: "blur(10px)", y: 40 }}
+            whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <h2 className="font-display text-4xl font-semibold leading-tight tracking-tight text-foreground/60 md:text-5xl lg:text-7xl">
+              Not another digital agency.
+            </h2>
+            <p className="mt-8 font-display text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-7xl">
+              Navogiz turns technology, sales and digital execution into <span className="text-primary italic">measurable movement.</span>
+            </p>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ServicesSection() {
+  const services = [
+    {
+      id: "01",
+      title: "SaaS",
+      headline: "Turn software into sales.",
+      desc: "Lead generation, customer acquisition and sales outreach for SaaS businesses.",
+      href: "/services/saas-sales"
+    },
+    {
+      id: "02",
+      title: "LOGISTICS",
+      headline: "Move more than freight.",
+      desc: "Customer acquisition and business development for logistics companies.",
+      href: "/services/logistics-sales"
+    },
+    {
+      id: "03",
+      title: "EDUCATION",
+      headline: "Learn skills that pay.",
+      desc: "Practical digital skills for careers, freelancing and business growth.",
+      href: "/services/educational-services"
+    },
+    {
+      id: "04",
+      title: "RURAL TECH",
+      headline: "Take digital further.",
+      desc: "Digital services and entrepreneurship opportunities for rural and semi-urban communities.",
+      href: "/services/rural-tech-store"
+    }
+  ];
+
+  return (
+    <section className="py-24 bg-surface-strong px-4">
+      <div className="mx-auto max-w-7xl">
+        <h2 className="font-display text-5xl font-bold uppercase leading-none md:text-7xl">
+          FOUR WAYS <br />WE MOVE BUSINESS.
+        </h2>
+
+        <div className="mt-20 flex flex-col gap-6">
+          {services.map((svc) => (
+            <Link key={svc.id} to={svc.href} className="group relative block overflow-hidden rounded-3xl bg-background p-8 md:p-12 transition-all duration-500 hover:bg-primary/5 hover:scale-[1.02] border border-border">
+              <div className="absolute right-12 top-1/2 -translate-y-1/2 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-4">
+                <div className="flex size-16 items-center justify-center rounded-full bg-primary text-white">
+                  <MoveUpRight className="size-8" />
+                </div>
+              </div>
+              <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-24 relative z-10">
+                <div className="font-mono text-6xl font-black text-foreground/10 transition-colors duration-500 group-hover:text-primary/30">
+                  {svc.id}
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-mono text-sm font-bold tracking-widest text-primary uppercase mb-4">{svc.title}</h3>
+                  <h4 className="font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl">{svc.headline}</h4>
+                  <p className="mt-4 max-w-lg text-lg text-foreground/70 opacity-0 -translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+                    {svc.desc}
+                  </p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ScrollStorySection() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"]
+  });
+
+  const opacity1 = useTransform(scrollYProgress, [0, 0.25, 0.3], [1, 1, 0]);
+  const opacity2 = useTransform(scrollYProgress, [0.35, 0.45, 0.55, 0.6], [0, 1, 1, 0]);
+  const opacity3 = useTransform(scrollYProgress, [0.65, 0.75], [0, 1]);
+
+  const display1 = useTransform(scrollYProgress, (v) => v > 0.35 ? "none" : "block");
+  const display2 = useTransform(scrollYProgress, (v) => v > 0.65 ? "none" : "block");
+
+  const y1 = useTransform(scrollYProgress, [0.25, 0.3], [0, -50]);
+  const y2 = useTransform(scrollYProgress, [0.35, 0.45, 0.55, 0.6], [50, 0, 0, -50]);
+  const y3 = useTransform(scrollYProgress, [0.65, 0.75], [50, 0]);
+
+  return (
+    <section ref={containerRef} className="relative h-[300vh] bg-foreground text-background">
+      <div className="sticky top-0 grid h-screen place-items-center px-6 overflow-hidden">
+        <motion.div style={{ opacity: opacity1, y: y1, display: display1 as any }} className="col-start-1 row-start-1 w-full text-center">
+          <h2 className="font-display text-6xl font-black md:text-9xl tracking-tighter">ATTENTION<br />ISN'T THE GOAL.</h2>
+        </motion.div>
+
+        <motion.div style={{ opacity: opacity2, y: y2, display: display2 as any }} className="col-start-1 row-start-1 w-full text-center">
+          <h2 className="font-display text-6xl font-black md:text-9xl tracking-tighter text-primary">TRACTION IS.</h2>
+        </motion.div>
+
+        <motion.div style={{ opacity: opacity3, y: y3 }} className="col-start-1 row-start-1 w-full text-center">
+          <h2 className="font-display text-6xl font-black md:text-9xl tracking-tighter text-primary">RESULTS ARE.</h2>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function CapabilitiesSection() {
+  const capabilities = [
+    "Sales", "Lead Generation", "Customer Acquisition", "Digital Marketing",
+    "AI", "E-Commerce", "Business Development", "Technology", "Training", "Entrepreneurship"
+  ];
+
+  return (
+    <section className="py-32 px-6 bg-background overflow-hidden">
+      <div className="mx-auto max-w-7xl">
+        <p className="font-mono text-sm font-bold tracking-widest text-foreground/40 uppercase mb-16 text-center">
+          What We Bring
+        </p>
+        <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+          {capabilities.map((cap, i) => (
+            <motion.div
+              key={cap}
+              whileHover={{ scale: 1.1, backgroundColor: "var(--primary)", color: "white" }}
+              className="rounded-full border border-border bg-surface px-8 py-4 font-display text-xl font-medium tracking-tight text-foreground transition-colors cursor-pointer"
+            >
+              {cap}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function WhyNavogizSection() {
+  return (
+    <section className="py-32 px-6 bg-surface-strong">
+      <div className="mx-auto max-w-7xl">
+        <h2 className="font-display text-7xl font-bold tracking-tighter text-foreground/10 md:text-[10rem] mb-20 text-center">
+          WHY NAVOGIZ?
+        </h2>
+
+        <div className="grid md:grid-cols-12 gap-12 items-center">
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="md:col-span-5 md:col-start-2"
+          >
+            <h3 className="font-display text-5xl font-bold leading-tight">Less noise.<br /><span className="text-primary">More movement.</span></h3>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="md:col-span-4 md:col-start-8"
+          >
+            <p className="text-xl font-medium text-foreground/70">Strategy that actually ships.</p>
+            <p className="mt-8 text-xl font-medium text-foreground/70">Digital execution with commercial intent.</p>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ProcessSection() {
+  const steps = [
+    { num: "01", title: "FIND THE GAP" },
+    { num: "02", title: "BUILD THE SYSTEM" },
+    { num: "03", title: "CREATE THE MOTION" },
+    { num: "04", title: "MEASURE THE SHIFT" },
+  ];
+
+  return (
+    <section className="py-32 px-6 bg-background">
+      <div className="mx-auto max-w-7xl">
+        <div className="flex flex-col md:flex-row justify-between relative">
+          <div className="absolute top-[48px] left-0 w-full h-[1px] bg-border hidden md:block">
+            <motion.div
+              className="h-full bg-primary"
+              initial={{ width: "0%" }}
+              whileInView={{ width: "100%" }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+            />
+          </div>
+
+          {steps.map((step, i) => (
+            <motion.div
+              key={step.num}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.2 }}
+              className="relative z-10 flex flex-row md:flex-col items-center gap-6 mb-12 md:mb-0 bg-background md:px-8 py-4"
+            >
+              <div className="flex size-16 items-center justify-center rounded-full border-2 border-primary bg-background font-mono text-xl font-bold text-primary">
+                {step.num}
+              </div>
+              <h4 className="font-display text-xl font-bold tracking-tight">{step.title}</h4>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function BigCTASection() {
+  return (
+    <section className="relative overflow-hidden bg-foreground py-40 px-6 text-background text-center">
+      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(22,131,255,0.15),transparent_50%)]" />
+      <div className="relative z-10 mx-auto max-w-4xl">
+        <h2 className="font-display text-6xl font-black tracking-tighter md:text-9xl">READY TO <br /> MOVE?</h2>
+        <p className="mt-8 text-2xl opacity-70">Tell us what you're building.</p>
+
+        <div className="mt-16">
+          <Link to="/contact" className="group inline-flex items-center justify-center rounded-full bg-primary px-10 py-6 font-semibold text-white transition-all hover:scale-110 hover:bg-white hover:text-primary">
+            Start a Conversation <ArrowRight className="ml-3 size-5 transition-transform group-hover:translate-x-2" />
+          </Link>
+        </div>
+      </div>
+    </section>
   );
 }

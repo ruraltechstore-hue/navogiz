@@ -34,10 +34,10 @@ function ServicesIndex() {
               const Icon = serviceIcons[index] ?? Boxes;
               const isEven = index % 2 === 0;
               const bgs = [
-                "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-                "https://images.unsplash.com/photo-1580674285054-bed31e145f59?auto=format&fit=crop&w=1200&q=80",
-                "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&w=1200&q=80",
-                "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1200&q=80"
+                "/images/saas-sales-1.jpg",
+                "/images/logistics-1.jpg",
+                "/images/education-1.jpg",
+                "/images/rural-1.jpg"
               ];
               const bgImage = bgs[index] ?? bgs[0];
 
@@ -48,9 +48,7 @@ function ServicesIndex() {
                     <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 group-hover:opacity-0" />
                   </div>
                   <div className="flex w-full flex-col justify-center lg:w-1/2 lg:px-12">
-                    <span className="grid size-14 place-items-center rounded-xl bg-primary/10 text-primary">
-                      <Icon className="size-6" />
-                    </span>
+                    
                     <h3 className="mt-6 font-display text-3xl font-bold md:text-4xl">{service.title}</h3>
                     {"subtitle" in service && (
                       <p className="mt-3 text-lg font-semibold text-accent-strong">{service.subtitle}</p>

@@ -65,10 +65,10 @@ export function InternshipPlansSection() {
               <p className="mt-5 font-display text-4xl font-bold text-foreground">{plan.priceLabel}</p>
               {plan.priceSuffix && <p className="mt-1 text-sm font-semibold text-muted-foreground">{plan.priceSuffix}</p>}
               <p className="mt-5 text-sm leading-6 text-muted-foreground">{plan.description}</p>
-              {"coverage" in plan && (
+              {"coverage" in (plan as any) && (
                 <div className="mt-5 border-l-4 border-accent-strong bg-surface p-4">
                   <p className="text-xs font-bold uppercase tracking-[0.12em] text-secondary">Program Coverage</p>
-                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{plan.coverage}</p>
+                  <p className="mt-2 text-sm leading-6 text-muted-foreground">{(plan as any).coverage}</p>
                 </div>
               )}
               <div className="mt-6 grid gap-6">
@@ -97,7 +97,7 @@ export function InternshipPlansSection() {
       </div>
 
       <Dialog open={activePlan !== null} onOpenChange={(open) => !open && setActivePlan(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-xl md:max-w-3xl">
           {activePlan?.payment ? (
             <PaymentRegistration plan={activePlan} stage={paymentStage} setStage={setPaymentStage} onClose={() => setActivePlan(null)} />
           ) : activePlan ? (
@@ -181,7 +181,7 @@ function PricingRequest({ plan }: { plan: PricingInternshipPlan }) {
   const [submitError, setSubmitError] = useState<string>();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<InternshipPricingData>({
     resolver: zodResolver(internshipPricingSchema),
-    defaultValues: { internshipStage: plan.registrationLabel, studentCount: 1 },
+    defaultValues: { internshipStage: (plan as any).registrationLabel || (plan as any).name, studentCount: 1 },
   });
 
   if (sent) {

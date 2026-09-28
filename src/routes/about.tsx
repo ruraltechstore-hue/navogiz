@@ -134,21 +134,7 @@ function About() {
         </div>
       </section>
 
-      <section className="bg-surface py-20 md:py-28">
-        <div className="section-shell">
-          <SectionHeading eyebrow="Our Capabilities" title="What We Do" description="Our services are designed around different business, sales, education, and market-development requirements." align="center" />
-          <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {services.map(({ title, description, icon: Icon, to }) => (
-              <article key={title} className="rise-in flex h-full flex-col border border-border bg-card p-7 shadow-sm transition-transform duration-300 hover:-translate-y-1">
-                <span className="grid size-12 place-items-center rounded-md bg-primary text-primary-foreground"><Icon className="size-6" /></span>
-                <h3 className="mt-7 font-display text-xl font-bold">{title}</h3>
-                <p className="mt-3 text-sm leading-7 text-muted-foreground">{description}</p>
-                <Button asChild variant="link" className="mt-auto h-auto justify-start px-0 pt-6"><Link to={to}>Learn More <ArrowRight /></Link></Button>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       <section className="py-20 md:py-28">
         <div className="section-shell grid gap-6 lg:grid-cols-2">
@@ -178,7 +164,7 @@ function About() {
 
       <section className="py-20 md:py-28"><div className="section-shell"><SectionHeading eyebrow="What Guides Us" title="Our Core Values" align="center" /><div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{values.map(({ title, description, icon }) => <IconCard key={title} icon={icon} title={title}>{description}</IconCard>)}</div></div></section>
 
-      <section className="bg-surface py-20 md:py-28"><div className="section-shell"><SectionHeading eyebrow="Our Community" title="Who We Work With" description="NAVOGIZ Innovative Solutions can work with different types of organizations and individuals depending on the service requirement. The applicable services depend on each specific requirement." /><div className="mt-12 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{audiences.map(({ title, description, icon }) => <IconCard key={title} icon={icon} title={title}>{description}</IconCard>)}</div></div></section>
+
 
       <section className="py-20 md:py-28">
         <div className="section-shell grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
@@ -189,7 +175,7 @@ function About() {
 
       <section className="bg-surface py-20 md:py-28"><div className="section-shell"><SectionHeading eyebrow="Why NAVOGIZ Innovative Solutions" title="Why Work With NAVOGIZ Innovative Solutions?" align="center" /><div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">{reasons.map(({ title, description }) => <article key={title} className="border-l-4 border-secondary bg-card p-7 shadow-sm"><CheckCircle2 className="size-6 text-accent-strong" /><h3 className="mt-5 font-display text-xl font-bold">{title}</h3><p className="mt-3 text-sm leading-7 text-muted-foreground">{description}</p></article>)}</div></div></section>
 
-      <section className="py-20 md:py-28"><div className="section-shell grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:items-center"><div className="grid size-20 place-items-center rounded-md bg-accent text-accent-foreground"><Compass className="size-9" /></div><div><p className="text-xs font-bold uppercase tracking-[0.16em] text-secondary">Our Service Philosophy</p><h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">Listen. Understand. Connect. Execute. Improve.</h2><div className="mt-5 space-y-4 leading-8 text-muted-foreground"><p>At NAVOGIZ Innovative Solutions, we believe effective service begins with understanding.</p><p>Every business has different requirements, audiences, challenges, and objectives. Our role is to understand those differences and work toward solutions that are relevant to the specific situation.</p><p>We focus on clear communication, practical execution, continuous coordination, and building relationships that can develop over time.</p></div></div></div></section>
+
 
       <section className="bg-secondary py-20 text-secondary-foreground md:py-24"><div className="section-shell grid gap-10 lg:grid-cols-[1fr_auto] lg:items-center"><div className="max-w-3xl"><p className="text-xs font-bold uppercase tracking-[0.18em] text-secondary-foreground/70">Partnership</p><h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">Let's Build Opportunities Together</h2><p className="mt-5 leading-8 text-secondary-foreground/80">Whether you are a business looking for sales and lead-generation support, an organization exploring business development opportunities, an educational institution seeking relevant programs, or a potential partner interested in collaboration, NAVOGIZ Innovative Solutions provides a platform to start the conversation.</p><p className="mt-3 font-semibold">Tell us what you are looking for, and let's explore how we can work together.</p></div><div className="flex flex-wrap gap-3"><Button asChild variant="accent" size="lg"><Link to="/partner">Partner With Us <ArrowRight /></Link></Button><Button asChild variant="inverse" size="lg"><Link to="/contact">Let's Talk</Link></Button></div></div></section>
 

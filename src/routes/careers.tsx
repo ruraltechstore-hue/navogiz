@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHero, CTASection, SectionHeading } from "@/components/marketing";
 import { Button } from "@/components/ui/button";
+import { UploadCloud } from "lucide-react";
 
 export const Route = createFileRoute("/careers")({
   component: CareersPage,
@@ -77,7 +78,14 @@ function CareersPage() {
                 </div>
                 <div className="space-y-2">
                   <label htmlFor="resume" className="text-sm font-medium">Upload Resume (PDF, DOCX)</label>
-                  <input id="resume" type="file" required accept=".pdf,.doc,.docx" className="flex h-10 w-full cursor-pointer rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-primary file:text-primary-foreground file:px-4 file:py-1 file:-mx-3 file:-my-2 file:mr-3 hover:file:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+                  <div className="relative group flex flex-col items-center justify-center w-full h-32 rounded-lg border-2 border-dashed border-input bg-background hover:bg-accent/50 hover:border-primary/50 transition-all">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                      <UploadCloud className="size-8 text-muted-foreground mb-3 group-hover:text-primary transition-colors" />
+                      <p className="mb-2 text-sm text-muted-foreground"><span className="font-semibold text-foreground">Click to upload</span> or drag and drop</p>
+                      <p className="text-xs text-muted-foreground/75">PDF or DOCX</p>
+                    </div>
+                    <input id="resume" type="file" required accept=".pdf,.doc,.docx" className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                  </div>
                 </div>
                 <Button type="submit" size="lg" className="w-full sm:w-auto">Submit Application</Button>
               </form>

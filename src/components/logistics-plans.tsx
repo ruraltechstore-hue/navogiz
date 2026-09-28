@@ -86,7 +86,7 @@ export function LogisticsPlansSection() {
       </div>
 
       <Dialog open={activePlan !== null} onOpenChange={(open) => !open && setActivePlan(null)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg md:max-w-3xl">
           {activePlan && <PlanCheckout plan={activePlan} stage={stage} setStage={setStage} onClose={() => setActivePlan(null)} />}
         </DialogContent>
       </Dialog>

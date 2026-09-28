@@ -15,10 +15,10 @@ export function ServiceDetailPage({ slug, extra }: ServiceDetailPageProps) {
   const Icon = service.icon;
 
   const serviceImages: Record<string, string> = {
-    "logistics-sales": "https://images.unsplash.com/photo-1586528116311-ad8ed7c5084f?auto=format&fit=crop&w=1200&q=80",
-    "educational-services": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
-    "saas-sales": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
-    "rural-tech-store": "https://images.unsplash.com/photo-1534723452862-4c874018d66d?auto=format&fit=crop&w=1200&q=80",
+    "logistics-sales": "/images/logistics-2.jpg",
+    "educational-services": "/images/education-1.jpg",
+    "saas-sales": "/images/saas-sales-2.jpg",
+    "rural-tech-store": "/images/rural-2.jpg",
   };
   const heroImg = serviceImages[slug];
 
@@ -36,9 +36,7 @@ export function ServiceDetailPage({ slug, extra }: ServiceDetailPageProps) {
           </div>
           <article className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <div className="rise-in">
-              <span className="grid size-14 place-items-center rounded-md bg-primary text-primary-foreground">
-                <Icon />
-              </span>
+
               {heroImg && (
                 <div className="mt-8 overflow-hidden rounded-2xl shadow-md">
                   <img src={heroImg} alt={service.title} className="aspect-video w-full object-cover transition-transform duration-700 hover:scale-105" />
