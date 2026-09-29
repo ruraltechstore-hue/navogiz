@@ -42,10 +42,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
         <div
           className={`mx-auto flex h-16 max-w-5xl items-center justify-between rounded-full border px-6 shadow-[0_8px_32px_rgba(0,0,0,0.1)] transition-all duration-500 backdrop-blur-md ${
             isHeroVisible
-              ? "bg-white/10 border-white/20 shadow-[inset_0_1px_1px_rgba(255,255,255,0.15)]"
+              ? "bg-white/5 border-white/10 shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]"
               : scrolled
-                ? "bg-background/80 border-border"
-                : "bg-background/50 border-transparent shadow-none"
+                ? "bg-background/40 border-border/50"
+                : "bg-transparent border-transparent shadow-none"
           }`}
         >
           <div
