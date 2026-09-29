@@ -1,9 +1,71 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Boxes, BriefcaseBusiness, Building2, GraduationCap, Handshake, Rocket, School, ShieldCheck, Target, Workflow } from "lucide-react";
+import {
+  Boxes,
+  BriefcaseBusiness,
+  Building2,
+  GraduationCap,
+  Handshake,
+  Rocket,
+  School,
+  ShieldCheck,
+  Target,
+  Workflow,
+} from "lucide-react";
 import { PartnershipForm } from "@/components/forms";
 import { IconCard, PageHero, SectionHeading } from "@/components/marketing";
 
-export const Route = createFileRoute("/partner")({ head: () => ({ meta: [{ title: "Partner With Us | NAVOGIZ Innovative Solutions" }, { name: "description", content: "Partner with NAVOGIZ Innovative Solutions to expand your customer base, strengthen sales capabilities, and reach new markets." }, { property: "og:title", content: "Let's Grow Together | NAVOGIZ Innovative Solutions" }, { property: "og:description", content: "A flexible, reliable sales partnership aligned with your business requirements." }, { property: "og:type", content: "website" }, { property: "og:url", content: "/partner" }, { name: "twitter:card", content: "summary_large_image" }], links: [{ rel: "canonical", href: "/partner" }] }), component: Partner });
+export const Route = createFileRoute("/partner")({
+  head: () => ({
+    meta: [
+      { title: "Partner With Us | NAVOGIZ Innovative Solutions" },
+      {
+        name: "description",
+        content:
+          "Partner with NAVOGIZ Innovative Solutions to expand your customer base, strengthen sales capabilities, and reach new markets.",
+      },
+      { property: "og:title", content: "Let's Grow Together | NAVOGIZ Innovative Solutions" },
+      {
+        property: "og:description",
+        content: "A flexible, reliable sales partnership aligned with your business requirements.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "/partner" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+    links: [{ rel: "canonical", href: "/partner" }],
+  }),
+  component: Partner,
+});
 
-const audiences = [[Boxes, "SaaS Companies"], [Building2, "Logistics Companies"], [GraduationCap, "EdTech Companies"], [School, "Educational Institutions"], [BriefcaseBusiness, "Training Organizations"], [Rocket, "Startups"], [Target, "Growing Businesses"]] as const;
-function Partner() { return <><PageHero eyebrow="Partner With Us" title="Let's Grow Together" description="Looking for a reliable sales partner to help expand your customer base and market reach? Partner with NAVOGIZ Innovative Solutions." /><section className="py-20 md:py-28"><div className="section-shell grid gap-12 lg:grid-cols-[0.72fr_1.28fr]"><SectionHeading eyebrow="Start a Conversation" title="Tell us what growth looks like for your business." description="Share your goals and current requirements. We’ll use the information to understand where our sales support can add the most value." /><div className="border border-border bg-card p-6 shadow-sm md:p-9"><PartnershipForm /></div></div></section></>; }
+const audiences = [
+  [Boxes, "SaaS Companies"],
+  [Building2, "Logistics Companies"],
+  [GraduationCap, "EdTech Companies"],
+  [School, "Educational Institutions"],
+  [BriefcaseBusiness, "Training Organizations"],
+  [Rocket, "Startups"],
+  [Target, "Growing Businesses"],
+] as const;
+function Partner() {
+  return (
+    <>
+      <PageHero
+        eyebrow="Partner With Us"
+        title="Let's Grow Together"
+        description="Looking for a reliable sales partner to help expand your customer base and market reach? Partner with NAVOGIZ Innovative Solutions."
+      />
+      <section className="py-20 md:py-28">
+        <div className="section-shell grid gap-12 lg:grid-cols-[0.72fr_1.28fr]">
+          <SectionHeading
+            eyebrow="Start a Conversation"
+            title="Tell us what growth looks like for your business."
+            description="Share your goals and current requirements. We’ll use the information to understand where our sales support can add the most value."
+          />
+          <div className="border border-border bg-card p-6 shadow-sm md:p-9">
+            <PartnershipForm />
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}

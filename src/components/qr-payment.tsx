@@ -2,7 +2,6 @@ import { CheckCircle2, QrCode } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-
 export async function postJson(path: string, body: unknown) {
   const response = await fetch(path, {
     method: "POST",
@@ -10,7 +9,8 @@ export async function postJson(path: string, body: unknown) {
     body: JSON.stringify(body),
   });
   const data = (await response.json().catch(() => ({}))) as Record<string, unknown>;
-  if (!response.ok) throw new Error(typeof data["error"] === "string" ? data["error"] : "Request failed");
+  if (!response.ok)
+    throw new Error(typeof data["error"] === "string" ? data["error"] : "Request failed");
   return data;
 }
 
@@ -39,7 +39,8 @@ export function QrPaymentView({
             <DialogTitle className="font-display text-2xl">Scan &amp; Pay</DialogTitle>
           </div>
           <DialogDescription className="mt-2 text-left">
-            Details saved for <span className="font-semibold text-foreground">{customerName}</span>. Complete your payment via any UPI app.
+            Details saved for <span className="font-semibold text-foreground">{customerName}</span>.
+            Complete your payment via any UPI app.
           </DialogDescription>
         </DialogHeader>
 
@@ -59,7 +60,9 @@ export function QrPaymentView({
         </dl>
 
         <p className="mt-4 text-xs leading-5 text-muted-foreground">
-          Please mention your Reference ID <span className="font-semibold text-foreground">{referenceId}</span> in the payment note so our team can verify your registration.
+          Please mention your Reference ID{" "}
+          <span className="font-semibold text-foreground">{referenceId}</span> in the payment note
+          so our team can verify your registration.
         </p>
 
         <div className="mt-6 flex flex-col sm:flex-row gap-3">
@@ -80,13 +83,23 @@ export function QrPaymentView({
 }
 
 /** Confirmation shown when the visitor says they have paid via QR. */
-export function QrPaymentDone({ planLabel, priceLabel, referenceId }: { planLabel: string; priceLabel: string; referenceId: string }) {
+export function QrPaymentDone({
+  planLabel,
+  priceLabel,
+  referenceId,
+}: {
+  planLabel: string;
+  priceLabel: string;
+  referenceId: string;
+}) {
   return (
     <div className="text-center">
       <CheckCircle2 className="mx-auto size-10 text-accent-foreground" />
       <DialogHeader className="mt-4">
         <DialogTitle className="text-center font-display text-2xl">Thank You</DialogTitle>
-        <DialogDescription className="text-center">Your registration details have been received.</DialogDescription>
+        <DialogDescription className="text-center">
+          Your registration details have been received.
+        </DialogDescription>
       </DialogHeader>
       <dl className="mt-6 grid gap-2 border border-border bg-surface p-5 text-left text-sm">
         <div className="flex items-start justify-between gap-4">
@@ -103,9 +116,9 @@ export function QrPaymentDone({ planLabel, priceLabel, referenceId }: { planLabe
         </div>
       </dl>
       <p className="mt-5 text-sm leading-7 text-muted-foreground">
-        Once your payment is verified by our team, your registration will be confirmed and we will contact
-        you with the next steps. If you have already paid, you can also share the payment screenshot on
-        WhatsApp for faster confirmation.
+        Once your payment is verified by our team, your registration will be confirmed and we will
+        contact you with the next steps. If you have already paid, you can also share the payment
+        screenshot on WhatsApp for faster confirmation.
       </p>
       <Button asChild variant="accent" size="lg" className="mt-6 w-full">
         <a href="https://wa.me/919392207839" target="_blank" rel="noreferrer">

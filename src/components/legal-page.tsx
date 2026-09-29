@@ -20,13 +20,18 @@ export function LegalPage({
         <div className="section-shell">
           <div className="mx-auto max-w-3xl">
             <Button asChild variant="ghost" className="mb-10 -ml-4">
-              <Link to="/"><ArrowLeft /> Back to Home</Link>
+              <Link to="/">
+                <ArrowLeft /> Back to Home
+              </Link>
             </Button>
             <article className="space-y-10 text-base leading-8 text-muted-foreground">
               {children}
             </article>
             <div className="mt-14 border-t border-border pt-6 text-sm leading-7 text-muted-foreground">
-              <p>This page provides general website information. Specific services may also be governed by a separate written agreement.</p>
+              <p>
+                This page provides general website information. Specific services may also be
+                governed by a separate written agreement.
+              </p>
               <p className="mt-2 font-semibold text-foreground">Last Updated: 23-09-2026</p>
             </div>
           </div>
@@ -48,15 +53,30 @@ export function LegalSection({ title, children }: { title: string; children: Rea
 export function LegalList({ items }: { items: readonly string[] }) {
   return (
     <ul className="space-y-2 pl-5">
-      {items.map((item) => <li key={item} className="list-disc pl-1 marker:text-accent-strong">{item}</li>)}
+      {items.map((item) => (
+        <li key={item} className="list-disc pl-1 marker:text-accent-strong">
+          {item}
+        </li>
+      ))}
     </ul>
   );
 }
 
 export function LegalContact() {
-  return <a className="font-semibold text-secondary underline underline-offset-4 hover:text-foreground" href="mailto:info@samrik.co.in">info@samrik.co.in</a>;
+  return (
+    <a
+      className="font-semibold text-secondary underline underline-offset-4 hover:text-foreground"
+      href="mailto:info@samrik.co.in"
+    >
+      info@samrik.co.in
+    </a>
+  );
 }
 
 export function EditablePlaceholder({ children }: { children: ReactNode }) {
-  return <strong className="inline-block border border-accent-strong/40 bg-accent px-2 py-1 text-accent-foreground">{children}</strong>;
+  return (
+    <strong className="inline-block border border-accent-strong/40 bg-accent px-2 py-1 text-accent-foreground">
+      {children}
+    </strong>
+  );
 }

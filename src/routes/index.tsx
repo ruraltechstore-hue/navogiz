@@ -9,6 +9,18 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  return isMobile;
+}
+
+
 function Index() {
   return (
     <div className="relative w-full bg-background">
@@ -25,6 +37,7 @@ function Index() {
 }
 
 function HeroSection() {
+  const isMobile = useIsMobile();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
   const words = ["BUILD", "SELL", "GROW", "MOVE"];
@@ -50,17 +63,24 @@ function HeroSection() {
   return (
     <section className="relative h-screen min-h-[700px] w-full overflow-hidden bg-hero">
       <div className="absolute inset-0 z-0 opacity-100">
-        <CloudSky
-          background="#07111F"
-          baseColor="#1683FF"
-          accentColor="#FFFFFF"
-          density={60}
-          size={80}
-          speed={20}
-          clouds={{ softness: 90, shadow: 120, cirrus: 20 }}
-          sun={{ x: 50, y: 50, glow: "rgba(22, 131, 255, 0.9)" }}
-          pointer={{ parallax: 150, wind: 50, damping: 20 }}
-        />
+        {!isMobile ? (
+          <CloudSky
+            background="#07111F"
+            baseColor="#1683FF"
+            accentColor="#FFFFFF"
+            density={60}
+            size={80}
+            speed={20}
+            clouds={{ softness: 90, shadow: 120, cirrus: 20 }}
+            sun={{ x: 50, y: 50, glow: "rgba(22, 131, 255, 0.9)" }}
+            pointer={{ parallax: 150, wind: 50, damping: 20 }}
+          />
+        ) : (
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: `url('/images/smalldevicebackground.jpg')` }}
+          />
+        )}
       </div>
 
       <div className="absolute inset-0 z-0 bg-gradient-to-b from-transparent via-background/20 to-background" />
@@ -136,7 +156,7 @@ function HeroSection() {
               transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
             >
               <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-white"><Navigation className="size-5" /></div>
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white"><Navigation className="size-5" /></div>
                 <div>
                   <p className="text-[11px] font-semibold text-white/60">Digital Growth</p>
                   <p className="text-sm font-bold text-white">Accelerated</p>
@@ -152,7 +172,7 @@ function HeroSection() {
               transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
             >
               <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-white"><Target className="size-5" /></div>
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white"><Target className="size-5" /></div>
                 <div>
                   <p className="text-[11px] font-semibold text-white/60">Sales Strategy</p>
                   <p className="text-sm font-bold text-white">Optimized</p>
@@ -168,7 +188,7 @@ function HeroSection() {
               transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 2 }}
             >
               <div className="flex items-center gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/20 text-white"><Zap className="size-5" /></div>
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white"><Zap className="size-5" /></div>
                 <div>
                   <p className="text-[11px] font-semibold text-white/60">Brand Identity</p>
                   <p className="text-sm font-bold text-white">Elevated</p>
@@ -191,50 +211,58 @@ function HeroSection() {
 }
 
 function IntroSection() {
+  const isMobile = useIsMobile();
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
 
   return (
-    <section className="relative py-32 md:py-48 px-6 bg-background">
-      <div className="mx-auto max-w-7xl flex flex-col md:flex-row gap-12 md:gap-24 items-start">
-        <div className="w-full md:w-1/4">
-          <p className="font-mono text-sm font-bold tracking-widest text-foreground/40 uppercase sticky top-32">
-            What we do
-          </p>
-          <div className="mt-24 sticky top-[65vh] hidden md:block">
-            <motion.div
-              animate={{ y: [-15, 15, -15] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <FolderFloat
-                items={[
-                  "Accelerated growth",
-                  "AI automation",
-                  "Brand positioning",
-                  "Sales funnels"
-                ]}
-                label="Navogiz Solutions"
-                sublabel="4 core services"
-              />
-            </motion.div>
-          </div>
-        </div>
-        <div className="w-full md:w-3/4">
+    <section className="relative min-h-[95vh] py-32 px-6 bg-background text-center flex flex-col justify-center items-center overflow-hidden">
+
+      {/* Top Header placed behind folder */}
+      <div className="relative z-0 w-full flex flex-col items-center pointer-events-none mt-16 md:mt-28">
+        {/* <p className="font-mono text-sm font-bold tracking-widest text-foreground/40 uppercase mb-4">
+          What we do
+        </p> */}
+        <h2 className="font-display text-4xl font-semibold leading-tight tracking-tight text-foreground/20 md:text-6xl lg:text-7xl max-w-4xl">
+          Not another digital agency.
+        </h2>
+      </div>
+
+      {/* Folder Hero Component tightly packed */}
+      {!isMobile && (
+        <div className="relative z-10 w-full flex items-center justify-center mt-10 md:mt-20 pointer-events-none">
           <motion.div
-            initial={{ opacity: 0, filter: "blur(10px)", y: 40 }}
-            whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            animate={{ y: [-15, 15, -15] }}
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+            className="pointer-events-auto scale-110 md:scale-125 lg:scale-150"
           >
-            <h2 className="font-display text-4xl font-semibold leading-tight tracking-tight text-foreground/60 md:text-5xl lg:text-7xl">
-              Not another digital agency.
-            </h2>
-            <p className="mt-8 font-display text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-7xl">
-              Navogiz turns technology, sales and digital execution into <span className="text-primary italic">measurable movement.</span>
-            </p>
+            <FolderFloat
+              items={[
+                "Accelerated growth",
+                "AI automation",
+                "Brand positioning",
+                "Sales funnels"
+              ]}
+              label="Navogiz Solutions"
+              sublabel="4 core services"
+            />
           </motion.div>
         </div>
-      </div>
+      )}
+
+      {/* Tightly packed bottom text */}
+      <motion.div
+        initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
+        whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-20 w-full max-w-5xl px-4 mt-6 md:mt-10 pointer-events-none drop-shadow-[0_0_15px_rgba(255,255,255,0.7)] dark:drop-shadow-[0_0_15px_rgba(0,0,0,0.7)]"
+      >
+        <p className="font-display text-4xl font-bold leading-tight tracking-tight text-foreground md:text-5xl lg:text-7xl">
+          From ideas on screen to results in the <span className="text-primary italic"> real world.</span>
+        </p>
+      </motion.div>
+
     </section>
   );
 }
@@ -280,7 +308,7 @@ function ServicesSection() {
 
         <div className="mt-20 flex flex-col gap-6">
           {services.map((svc) => (
-            <Link key={svc.id} to={svc.href} className="group relative block overflow-hidden rounded-3xl bg-background p-8 md:p-12 transition-all duration-500 hover:bg-primary/5 hover:scale-[1.02] border border-border">
+            <Link key={svc.id} to={svc.href as any} className="group relative block overflow-hidden rounded-3xl bg-background p-8 md:p-12 transition-all duration-500 hover:bg-primary/5 hover:scale-[1.02] border border-border">
               <div className="absolute right-12 top-1/2 -translate-y-1/2 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-4">
                 <div className="flex size-16 items-center justify-center rounded-full bg-primary text-white">
                   <MoveUpRight className="size-8" />

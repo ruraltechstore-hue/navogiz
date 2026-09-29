@@ -168,6 +168,19 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouter().state.location.pathname;
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      window.scrollTo(0, 0);
+      // @ts-ignore
+      if (window.lenis) {
+        // @ts-ignore
+        window.lenis.scrollTo(0, { immediate: true });
+      }
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -179,6 +192,9 @@ function RootComponent() {
       wheelMultiplier: 1,
       touchMultiplier: 2,
     });
+    
+    // @ts-ignore
+    window.lenis = lenis;
 
     function raf(time: number) {
       lenis.raf(time);
@@ -196,7 +212,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <Preloader />
       <CustomCursor />
-      <SiteShell><Outlet /></SiteShell>
+      <SiteShell>
+        <Outlet />
+      </SiteShell>
     </QueryClientProvider>
   );
 }

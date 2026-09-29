@@ -28,7 +28,9 @@ export async function notifyRegistration(details: RegistrationEmailDetails): Pro
     { label: "Mobile Number", value: details.customerPhone },
     ...(details.college ? [{ label: "College/University", value: details.college }] : []),
     ...(details.course ? [{ label: "Course/Program", value: details.course }] : []),
-    ...(details.internshipStage ? [{ label: "Internship Stage", value: details.internshipStage }] : []),
+    ...(details.internshipStage
+      ? [{ label: "Internship Stage", value: details.internshipStage }]
+      : []),
     { label: "Selected Plan", value: details.plan },
     { label: "Amount", value: details.priceLabel },
     { label: details.referenceLabel, value: details.reference },

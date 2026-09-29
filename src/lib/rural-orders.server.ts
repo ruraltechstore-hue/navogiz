@@ -27,7 +27,11 @@ export interface RuralOrderRecord {
 
 export interface RuralOrderStore {
   create(record: RuralOrderRecord): Promise<void>;
-  updateStatus(razorpayOrderId: string, status: RuralOrderStatus, razorpayPaymentId?: string): Promise<void>;
+  updateStatus(
+    razorpayOrderId: string,
+    status: RuralOrderStatus,
+    razorpayPaymentId?: string,
+  ): Promise<void>;
   get(razorpayOrderId: string): Promise<RuralOrderRecord | undefined>;
   list(): Promise<RuralOrderRecord[]>;
 }
@@ -49,7 +53,12 @@ export const ruralOrderStore: RuralOrderStore = {
   async updateStatus(razorpayOrderId, status, razorpayPaymentId) {
     const existing = records.get(razorpayOrderId);
     const updated: RuralOrderRecord = existing
-      ? { ...existing, status, razorpayPaymentId: razorpayPaymentId ?? existing.razorpayPaymentId, updatedAt: new Date().toISOString() }
+      ? {
+          ...existing,
+          status,
+          razorpayPaymentId: razorpayPaymentId ?? existing.razorpayPaymentId,
+          updatedAt: new Date().toISOString(),
+        }
       : {
           customerName: "unknown",
           customerEmail: "unknown",

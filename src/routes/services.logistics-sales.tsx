@@ -6,9 +6,16 @@ export const Route = createFileRoute("/services/logistics-sales")({
   head: () => ({
     meta: [
       { title: "Logistic Services | NAVOGIZ Innovative Solutions" },
-      { name: "description", content: "NAVOGIZ Innovative Solutions helps logistics and supply-chain businesses connect with potential customers and identify new B2B opportunities." },
+      {
+        name: "description",
+        content:
+          "NAVOGIZ Innovative Solutions helps logistics and supply-chain businesses connect with potential customers and identify new B2B opportunities.",
+      },
       { property: "og:title", content: "Logistic Services | NAVOGIZ Innovative Solutions" },
-      { property: "og:description", content: "B2B sales and business-development support built for logistics companies." },
+      {
+        property: "og:description",
+        content: "B2B sales and business-development support built for logistics companies.",
+      },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "/services/logistics-sales" },
       { name: "twitter:card", content: "summary_large_image" },

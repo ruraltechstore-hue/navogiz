@@ -14,14 +14,20 @@ export const Route = createFileRoute("/api/public/verify-razorpay-payment")({
       POST: async ({ request }) => {
         const keySecret = process.env["RAZORPAY_KEY_SECRET"];
         if (!keySecret) {
-          return Response.json({ verified: false, error: "Payments are not configured yet." }, { status: 503 });
+          return Response.json(
+            { verified: false, error: "Payments are not configured yet." },
+            { status: 503 },
+          );
         }
 
         let parsed: z.infer<typeof bodySchema>;
         try {
           parsed = bodySchema.parse(await request.json());
         } catch {
-          return Response.json({ verified: false, error: "Invalid payment details." }, { status: 400 });
+          return Response.json(
+            { verified: false, error: "Invalid payment details." },
+            { status: 400 },
+          );
         }
 
         const expected = createHmac("sha256", keySecret)
@@ -30,13 +36,21 @@ export const Route = createFileRoute("/api/public/verify-razorpay-payment")({
 
         const received = Buffer.from(parsed.razorpay_signature, "utf8");
         const expectedBuffer = Buffer.from(expected, "utf8");
-        const valid = received.length === expectedBuffer.length && timingSafeEqual(received, expectedBuffer);
+        const valid =
+          received.length === expectedBuffer.length && timingSafeEqual(received, expectedBuffer);
 
         const { ruralOrderStore } = await import("@/lib/rural-orders.server");
-        await ruralOrderStore.updateStatus(parsed.razorpay_order_id, valid ? "Paid" : "Failed", parsed.razorpay_payment_id);
+        await ruralOrderStore.updateStatus(
+          parsed.razorpay_order_id,
+          valid ? "Paid" : "Failed",
+          parsed.razorpay_payment_id,
+        );
 
         if (!valid) {
-          return Response.json({ verified: false, error: "Payment verification failed." }, { status: 400 });
+          return Response.json(
+            { verified: false, error: "Payment verification failed." },
+            { status: 400 },
+          );
         }
 
         const record = await ruralOrderStore.get(parsed.razorpay_order_id);

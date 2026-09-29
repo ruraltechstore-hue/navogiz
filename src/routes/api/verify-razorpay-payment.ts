@@ -14,12 +14,18 @@ export const Route = createFileRoute("/api/verify-razorpay-payment")({
       POST: async ({ request }) => {
         const keySecret = process.env["RAZORPAY_KEY_SECRET"];
         if (!keySecret) {
-          return Response.json({ verified: false, error: "Payments are not configured yet." }, { status: 503 });
+          return Response.json(
+            { verified: false, error: "Payments are not configured yet." },
+            { status: 503 },
+          );
         }
 
         const result = bodySchema.safeParse(await request.json().catch(() => null));
         if (!result.success) {
-          return Response.json({ verified: false, error: "Invalid payment details." }, { status: 400 });
+          return Response.json(
+            { verified: false, error: "Invalid payment details." },
+            { status: 400 },
+          );
         }
 
         const { ruralOrderStore } = await import("@/lib/rural-orders.server");
@@ -33,7 +39,8 @@ export const Route = createFileRoute("/api/verify-razorpay-payment")({
           .digest("hex");
         const received = Buffer.from(result.data.razorpay_signature, "utf8");
         const expectedBuffer = Buffer.from(expected, "utf8");
-        const valid = received.length === expectedBuffer.length && timingSafeEqual(received, expectedBuffer);
+        const valid =
+          received.length === expectedBuffer.length && timingSafeEqual(received, expectedBuffer);
 
         await ruralOrderStore.updateStatus(
           result.data.razorpay_order_id,
@@ -41,7 +48,10 @@ export const Route = createFileRoute("/api/verify-razorpay-payment")({
           result.data.razorpay_payment_id,
         );
         if (!valid) {
-          return Response.json({ verified: false, error: "Payment verification failed." }, { status: 400 });
+          return Response.json(
+            { verified: false, error: "Payment verification failed." },
+            { status: 400 },
+          );
         }
 
         const { notifyRegistration } = await import("@/lib/registration-email.server");

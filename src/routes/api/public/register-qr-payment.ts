@@ -6,7 +6,10 @@ const bodySchema = z.object({
   plan: z.string().trim().min(1).max(80),
   customerName: z.string().trim().min(2).max(100),
   customerEmail: z.string().trim().email().max(255),
-  customerPhone: z.string().trim().regex(/^[0-9+\-\s()]{7,20}$/, "Invalid phone number"),
+  customerPhone: z
+    .string()
+    .trim()
+    .regex(/^[0-9+\-\s()]{7,20}$/, "Invalid phone number"),
   college: z.string().trim().min(2).max(180).optional(),
   course: z.string().trim().min(2).max(150).optional(),
 });

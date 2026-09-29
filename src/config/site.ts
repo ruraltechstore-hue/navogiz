@@ -33,22 +33,26 @@ export const services = [
   {
     slug: "saas-sales",
     title: "SaaS Services",
-    description: "Help SaaS businesses generate leads, acquire customers, and expand their sales reach.",
+    description:
+      "Help SaaS businesses generate leads, acquire customers, and expand their sales reach.",
   },
   {
     slug: "logistics-sales",
     title: "Logistic Services",
-    description: "Support logistics businesses with customer acquisition, sales outreach, and business development.",
+    description:
+      "Support logistics businesses with customer acquisition, sales outreach, and business development.",
   },
   {
     slug: "educational-services",
     title: "Educational Services",
     subtitle: "Practical Digital Skills for Career & Business Growth",
-    description: "Develop practical, industry-relevant skills across digital marketing, artificial intelligence, e-commerce, sales, entrepreneurship, freelancing, and business growth.",
+    description:
+      "Develop practical, industry-relevant skills across digital marketing, artificial intelligence, e-commerce, sales, entrepreneurship, freelancing, and business growth.",
   },
   {
     slug: "rural-tech-store",
     title: "Rural Tech Store Services",
-    description: "Empowering rural and semi-urban communities through digital services and local entrepreneurship opportunities.",
+    description:
+      "Empowering rural and semi-urban communities through digital services and local entrepreneurship opportunities.",
   },
 ] as const;

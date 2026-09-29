@@ -6,7 +6,10 @@ const bodySchema = z.object({
   plan: z.enum(ruralPlanIds),
   customerName: z.string().trim().min(2).max(100),
   customerEmail: z.string().trim().email().max(255),
-  customerPhone: z.string().trim().regex(/^[0-9+\-\s()]{7,20}$/, "Invalid phone number"),
+  customerPhone: z
+    .string()
+    .trim()
+    .regex(/^[0-9+\-\s()]{7,20}$/, "Invalid phone number"),
 });
 
 export const Route = createFileRoute("/api/public/create-razorpay-order")({
@@ -49,11 +52,22 @@ export const Route = createFileRoute("/api/public/create-razorpay-order")({
         });
 
         if (!razorpayResponse.ok) {
-          console.error("razorpay order creation failed", razorpayResponse.status, await razorpayResponse.text());
-          return Response.json({ error: "Could not start the payment. Please try again." }, { status: 502 });
+          console.error(
+            "razorpay order creation failed",
+            razorpayResponse.status,
+            await razorpayResponse.text(),
+          );
+          return Response.json(
+            { error: "Could not start the payment. Please try again." },
+            { status: 502 },
+          );
         }
 
-        const order = (await razorpayResponse.json()) as { id: string; amount: number; currency: string };
+        const order = (await razorpayResponse.json()) as {
+          id: string;
+          amount: number;
+          currency: string;
+        };
 
         const { ruralOrderStore } = await import("@/lib/rural-orders.server");
         const now = new Date().toISOString();

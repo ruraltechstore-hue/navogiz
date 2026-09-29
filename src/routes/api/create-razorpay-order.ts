@@ -6,7 +6,10 @@ const bodySchema = z.object({
   plan: z.string().trim().min(2).max(80),
   customerName: z.string().trim().min(2).max(100),
   customerEmail: z.string().trim().email().max(255),
-  customerPhone: z.string().trim().regex(/^[0-9+\-\s()]{7,20}$/, "Invalid phone number"),
+  customerPhone: z
+    .string()
+    .trim()
+    .regex(/^[0-9+\-\s()]{7,20}$/, "Invalid phone number"),
   college: z.string().trim().min(2).max(180).optional(),
   course: z.string().trim().min(2).max(150).optional(),
 });
@@ -30,9 +33,13 @@ export const Route = createFileRoute("/api/create-razorpay-order")({
         if (!plan) {
           return Response.json({ error: "The selected plan is not available." }, { status: 400 });
         }
-        const isInternship = (plan as any).id === "internship-stage-1" || (plan as any).id === "internship-stage-2";
+        const isInternship =
+          (plan as any).id === "internship-stage-1" || (plan as any).id === "internship-stage-2";
         if (isInternship && (!result.data.college || !result.data.course)) {
-          return Response.json({ error: "Please enter your college and course details." }, { status: 400 });
+          return Response.json(
+            { error: "Please enter your college and course details." },
+            { status: 400 },
+          );
         }
 
         const razorpayResponse = await fetch("https://api.razorpay.com/v1/orders", {
@@ -58,7 +65,10 @@ export const Route = createFileRoute("/api/create-razorpay-order")({
 
         if (!razorpayResponse.ok) {
           console.error("Razorpay order creation failed", razorpayResponse.status);
-          return Response.json({ error: "Could not start the payment. Please try again." }, { status: 502 });
+          return Response.json(
+            { error: "Could not start the payment. Please try again." },
+            { status: 502 },
+          );
         }
 
         const order = (await razorpayResponse.json()) as { id: string; amount: number };
@@ -70,7 +80,9 @@ export const Route = createFileRoute("/api/create-razorpay-order")({
           customerPhone: result.data.customerPhone,
           ...(result.data.college ? { college: result.data.college } : {}),
           ...(result.data.course ? { course: result.data.course } : {}),
-          ...(isInternship && "registrationLabel" in (plan as any) ? { internshipStage: (plan as any).registrationLabel } : {}),
+          ...(isInternship && "registrationLabel" in (plan as any)
+            ? { internshipStage: (plan as any).registrationLabel }
+            : {}),
           plan: plan.name,
           amountPaise: plan.amountPaise,
           currency: "INR",
@@ -89,7 +101,9 @@ export const Route = createFileRoute("/api/create-razorpay-order")({
           customerPhone: result.data.customerPhone,
           ...(result.data.college ? { college: result.data.college } : {}),
           ...(result.data.course ? { course: result.data.course } : {}),
-          ...(isInternship && "registrationLabel" in (plan as any) ? { internshipStage: (plan as any).registrationLabel } : {}),
+          ...(isInternship && "registrationLabel" in (plan as any)
+            ? { internshipStage: (plan as any).registrationLabel }
+            : {}),
           plan: plan.name,
           priceLabel: plan.priceLabel,
           reference: order.id,

@@ -36,13 +36,18 @@ export function ServiceDetailPage({ slug, extra }: ServiceDetailPageProps) {
           </div>
           <article className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr]">
             <div className="rise-in">
-
               {heroImg && (
                 <div className="mt-8 overflow-hidden rounded-2xl shadow-md">
-                  <img src={heroImg} alt={service.title} className="aspect-video w-full object-cover transition-transform duration-700 hover:scale-105" />
+                  <img
+                    src={heroImg}
+                    alt={service.title}
+                    className="aspect-video w-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
                 </div>
               )}
-              <p className="mt-8 text-xs font-bold uppercase tracking-[0.16em] text-secondary">{service.eyebrow}</p>
+              <p className="mt-8 text-xs font-bold uppercase tracking-[0.16em] text-secondary">
+                {service.eyebrow}
+              </p>
               <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">{service.title}</h2>
               {service.subheading && (
                 <p className="mt-5 text-lg font-semibold text-foreground">{service.subheading}</p>
@@ -88,8 +93,12 @@ export function ServiceDetailPage({ slug, extra }: ServiceDetailPageProps) {
                   </div>
                   <div className="border-l-4 border-accent-strong bg-surface p-7 md:p-9">
                     <Workflow className="size-8 text-secondary" />
-                    <h3 className="mt-5 font-display text-2xl font-bold">{service.right.objective.title}</h3>
-                    <p className="mt-3 leading-8 text-muted-foreground">{service.right.objective.text}</p>
+                    <h3 className="mt-5 font-display text-2xl font-bold">
+                      {service.right.objective.title}
+                    </h3>
+                    <p className="mt-3 leading-8 text-muted-foreground">
+                      {service.right.objective.text}
+                    </p>
                   </div>
                 </div>
               )}

@@ -84,10 +84,7 @@ export const internshipPlans = [
       },
       {
         title: "Who Can Apply",
-        items: [
-          "Digital marketers and influencers",
-          "Bloggers with a strong online presence",
-        ],
+        items: ["Digital marketers and influencers", "Bloggers with a strong online presence"],
       },
     ],
   },

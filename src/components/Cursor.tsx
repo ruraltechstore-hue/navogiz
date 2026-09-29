@@ -8,8 +8,8 @@ export function CustomCursor() {
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    // Disable on mobile
-    if (window.matchMedia("(pointer: coarse)").matches) {
+    // Disable on mobile or small devices
+    if (window.innerWidth < 768 || window.matchMedia("(pointer: coarse)").matches) {
       setIsMobile(true);
       return;
     }
@@ -17,17 +17,17 @@ export function CustomCursor() {
     const mouseMove = (e: MouseEvent) => {
       setMousePosition({
         x: e.clientX,
-        y: e.clientY
+        y: e.clientY,
       });
     };
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      
+
       const button = target.closest("button");
       const link = target.closest("a");
       const serviceCard = target.closest(".service-card"); // Add this class to service cards
-      
+
       if (serviceCard) {
         setCursorVariant("view");
         setCursorText("VIEW");
@@ -61,7 +61,7 @@ export function CustomCursor() {
       height: 16,
       width: 16,
       backgroundColor: "rgba(22, 131, 255, 0.5)",
-      mixBlendMode: "difference" as any
+      mixBlendMode: "difference" as any,
     },
     expand: {
       x: mousePosition.x - 24,
@@ -69,7 +69,7 @@ export function CustomCursor() {
       height: 48,
       width: 48,
       backgroundColor: "rgba(22, 131, 255, 0.2)",
-      mixBlendMode: "normal" as any
+      mixBlendMode: "normal" as any,
     },
     link: {
       x: mousePosition.x - 12,
@@ -77,7 +77,7 @@ export function CustomCursor() {
       height: 24,
       width: 24,
       backgroundColor: "rgba(22, 131, 255, 0.4)",
-      mixBlendMode: "difference" as any
+      mixBlendMode: "difference" as any,
     },
     view: {
       x: mousePosition.x - 32,
@@ -85,8 +85,8 @@ export function CustomCursor() {
       height: 64,
       width: 64,
       backgroundColor: "rgba(22, 131, 255, 1)",
-      mixBlendMode: "normal" as any
-    }
+      mixBlendMode: "normal" as any,
+    },
   };
 
   return (

@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Mail, MessageCircleQuestion, Phone } from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { PageHero } from "@/components/marketing";
 import { siteConfig } from "@/config/site";
@@ -305,12 +310,10 @@ function FAQ() {
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
                 <MessageCircleQuestion className="h-6 w-6" />
               </div>
-              <h2 className="mt-6 font-display text-2xl font-bold">
-                Need more information?
-              </h2>
+              <h2 className="mt-6 font-display text-2xl font-bold">Need more information?</h2>
               <p className="mt-4 text-sm leading-7 text-muted-foreground">
-                Our team can discuss your specific industry, audience, sales
-                goals, or program requirements.
+                Our team can discuss your specific industry, audience, sales goals, or program
+                requirements.
               </p>
               <div className="mt-6 space-y-3">
                 <Button asChild variant="accent" className="w-full">
@@ -347,16 +350,9 @@ function FAQ() {
                 <h2 className="mb-6 font-display text-xl font-bold md:text-2xl">
                   {catIndex + 1}. {category.category}
                 </h2>
-                <Accordion
-                  type="single"
-                  collapsible
-                  className="border-t border-border"
-                >
+                <Accordion type="single" collapsible className="border-t border-border">
                   {category.items.map((faq, index) => (
-                    <AccordionItem
-                      key={faq.q}
-                      value={`${category.category}-item-${index}`}
-                    >
+                    <AccordionItem key={faq.q} value={`${category.category}-item-${index}`}>
                       <AccordionTrigger className="py-5 text-left font-display text-base font-bold no-underline hover:no-underline md:py-6 md:text-lg">
                         {faq.q}
                       </AccordionTrigger>

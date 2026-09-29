@@ -5,7 +5,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { SectionHeading } from "@/components/marketing";
 import { QrPaymentDone, QrPaymentView, postJson } from "@/components/qr-payment";
@@ -15,7 +21,10 @@ import { cn } from "@/lib/utils";
 const customerSchema = z.object({
   customerName: z.string().trim().min(2, "Enter your full name").max(100),
   customerEmail: z.string().trim().email("Enter a valid email address").max(255),
-  customerPhone: z.string().trim().regex(/^[0-9+\-\s()]{7,20}$/, "Enter a valid mobile number"),
+  customerPhone: z
+    .string()
+    .trim()
+    .regex(/^[0-9+\-\s()]{7,20}$/, "Enter a valid mobile number"),
 });
 type CustomerData = z.infer<typeof customerSchema>;
 
@@ -27,8 +36,6 @@ type Stage =
   | { kind: "cancelled" }
   | { kind: "qr"; referenceId: string }
   | { kind: "qr-done"; referenceId: string };
-
-
 
 export function LogisticsPlansSection() {
   const [activePlan, setActivePlan] = useState<LogisticsPlan | null>(null);
@@ -61,12 +68,21 @@ export function LogisticsPlansSection() {
                   Popular
                 </span>
               )}
-              <h3 className="max-w-[70%] font-display text-xl font-bold text-card-foreground">{plan.name}</h3>
-              <p className="mt-3 font-display text-4xl font-bold text-foreground">{plan.priceLabel}</p>
-              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">Total franchise price · INR</p>
+              <h3 className="max-w-[70%] font-display text-xl font-bold text-card-foreground">
+                {plan.name}
+              </h3>
+              <p className="mt-3 font-display text-4xl font-bold text-foreground">
+                {plan.priceLabel}
+              </p>
+              <p className="mt-1 text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+                Total franchise price · INR
+              </p>
               <ul className="mt-6 grid gap-3">
                 {plan.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-3 text-sm leading-6 text-muted-foreground">
+                  <li
+                    key={feature}
+                    className="flex items-start gap-3 text-sm leading-6 text-muted-foreground"
+                  >
                     <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-accent text-accent-foreground">
                       <Check className="size-3" />
                     </span>
@@ -74,7 +90,12 @@ export function LogisticsPlansSection() {
                   </li>
                 ))}
               </ul>
-              <Button variant={plan.popular ? "accent" : "outline"} size="lg" className="mt-8 w-full" onClick={() => openPlan(plan)}>
+              <Button
+                variant={plan.popular ? "accent" : "outline"}
+                size="lg"
+                className="mt-8 w-full"
+                onClick={() => openPlan(plan)}
+              >
                 Register Now
               </Button>
             </article>
@@ -87,7 +108,14 @@ export function LogisticsPlansSection() {
 
       <Dialog open={activePlan !== null} onOpenChange={(open) => !open && setActivePlan(null)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg md:max-w-3xl">
-          {activePlan && <PlanCheckout plan={activePlan} stage={stage} setStage={setStage} onClose={() => setActivePlan(null)} />}
+          {activePlan && (
+            <PlanCheckout
+              plan={activePlan}
+              stage={stage}
+              setStage={setStage}
+              onClose={() => setActivePlan(null)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </section>
@@ -107,29 +135,41 @@ function PlanCheckout({
 }) {
   const [error, setError] = useState<string>();
   const [formValues, setFormValues] = useState<CustomerData>();
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<CustomerData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CustomerData>({
     resolver: zodResolver(customerSchema),
   });
 
   async function startQrPayment(values: CustomerData) {
     setError(undefined);
     try {
-      const result = await postJson("/api/public/register-qr-payment", { plan: plan.id, ...values });
+      const result = await postJson("/api/public/register-qr-payment", {
+        plan: plan.id,
+        ...values,
+      });
       setFormValues(values);
       setStage({ kind: "qr", referenceId: result["referenceId"] as string });
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not save your details. Please try again.");
+      setError(
+        cause instanceof Error ? cause.message : "Could not save your details. Please try again.",
+      );
     }
   }
-
 
   if (stage.kind === "success") {
     return (
       <div className="text-center">
         <CheckCircle2 className="mx-auto size-10 text-accent-foreground" />
         <DialogHeader className="mt-4">
-          <DialogTitle className="text-center font-display text-2xl">Payment Successful</DialogTitle>
-          <DialogDescription className="text-center">Thank you for registering with NAVOGIZ Innovative Solutions.</DialogDescription>
+          <DialogTitle className="text-center font-display text-2xl">
+            Payment Successful
+          </DialogTitle>
+          <DialogDescription className="text-center">
+            Thank you for registering with NAVOGIZ Innovative Solutions.
+          </DialogDescription>
         </DialogHeader>
         <dl className="mt-6 grid gap-2 border border-border bg-surface p-5 text-left text-sm">
           <Row label="Plan" value={stage.plan} />
@@ -137,9 +177,12 @@ function PlanCheckout({
           <Row label="Payment ID" value={stage.paymentId} />
         </dl>
         <p className="mt-5 text-sm leading-7 text-muted-foreground">
-          Your payment has been successfully received. Our team will contact you regarding the next steps.
+          Your payment has been successfully received. Our team will contact you regarding the next
+          steps.
         </p>
-        <Button asChild variant="accent" size="lg" className="mt-6 w-full"><Link to="/">Back to Home</Link></Button>
+        <Button asChild variant="accent" size="lg" className="mt-6 w-full">
+          <Link to="/">Back to Home</Link>
+        </Button>
       </div>
     );
   }
@@ -158,7 +201,13 @@ function PlanCheckout({
   }
 
   if (stage.kind === "qr-done") {
-    return <QrPaymentDone planLabel={plan.name} priceLabel={plan.priceLabel} referenceId={stage.referenceId} />;
+    return (
+      <QrPaymentDone
+        planLabel={plan.name}
+        priceLabel={plan.priceLabel}
+        referenceId={stage.referenceId}
+      />
+    );
   }
 
   if (stage.kind === "failed" || stage.kind === "cancelled") {
@@ -167,13 +216,26 @@ function PlanCheckout({
       <div className="text-center">
         <AlertTriangle className="mx-auto size-10 text-destructive" />
         <DialogHeader className="mt-4">
-          <DialogTitle className="text-center font-display text-2xl">{cancelled ? "Payment Cancelled" : "Payment Failed"}</DialogTitle>
+          <DialogTitle className="text-center font-display text-2xl">
+            {cancelled ? "Payment Cancelled" : "Payment Failed"}
+          </DialogTitle>
           <DialogDescription className="text-center">
-            {cancelled ? "Your payment was not completed." : "Your payment could not be completed. Please try again."}
+            {cancelled
+              ? "Your payment was not completed."
+              : "Your payment could not be completed. Please try again."}
           </DialogDescription>
         </DialogHeader>
-        <Button variant="accent" size="lg" className="mt-6 w-full" onClick={() => setStage({ kind: "form" })}>Try Again</Button>
-        <Button variant="link" className="mt-2 w-full" onClick={onClose}>Close</Button>
+        <Button
+          variant="accent"
+          size="lg"
+          className="mt-6 w-full"
+          onClick={() => setStage({ kind: "form" })}
+        >
+          Try Again
+        </Button>
+        <Button variant="link" className="mt-2 w-full" onClick={onClose}>
+          Close
+        </Button>
       </div>
     );
   }
@@ -181,20 +243,46 @@ function PlanCheckout({
   return (
     <div>
       <DialogHeader>
-        <DialogTitle className="font-display text-2xl">{plan.name} — {plan.priceLabel}</DialogTitle>
+        <DialogTitle className="font-display text-2xl">
+          {plan.name} — {plan.priceLabel}
+        </DialogTitle>
         <DialogDescription>Enter your details to continue to secure payment.</DialogDescription>
       </DialogHeader>
       <form className="mt-5 grid gap-4" noValidate onSubmit={handleSubmit(startQrPayment)}>
         <Field label="Full Name" error={errors.customerName?.message}>
-          <Input {...register("customerName")} className="h-11 bg-card" placeholder="Your full name" autoComplete="name" />
+          <Input
+            {...register("customerName")}
+            className="h-11 bg-card"
+            placeholder="Your full name"
+            autoComplete="name"
+          />
         </Field>
         <Field label="Email Address" error={errors.customerEmail?.message}>
-          <Input {...register("customerEmail")} type="email" className="h-11 bg-card" placeholder="name@example.com" autoComplete="email" />
+          <Input
+            {...register("customerEmail")}
+            type="email"
+            className="h-11 bg-card"
+            placeholder="name@example.com"
+            autoComplete="email"
+          />
         </Field>
         <Field label="Mobile Number" error={errors.customerPhone?.message}>
-          <Input {...register("customerPhone")} type="tel" className="h-11 bg-card" placeholder="Mobile number" autoComplete="tel" />
+          <Input
+            {...register("customerPhone")}
+            type="tel"
+            className="h-11 bg-card"
+            placeholder="Mobile number"
+            autoComplete="tel"
+          />
         </Field>
-        {error && <p className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">{error}</p>}
+        {error && (
+          <p
+            className="border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+            role="alert"
+          >
+            {error}
+          </p>
+        )}
         <Button
           type="submit"
           variant="accent"
@@ -202,7 +290,9 @@ function PlanCheckout({
           className="w-full"
           disabled={isSubmitting || stage.kind === "processing"}
         >
-          {isSubmitting || stage.kind === "processing" ? "Saving registration…" : "Pay via QR Code (UPI)"}
+          {isSubmitting || stage.kind === "processing"
+            ? "Saving registration…"
+            : "Pay via QR Code (UPI)"}
         </Button>
       </form>
     </div>
@@ -210,9 +300,28 @@ function PlanCheckout({
 }
 
 function Row({ label, value }: { label: string; value: string }) {
-  return <div className="flex items-start justify-between gap-4"><dt className="text-muted-foreground">{label}</dt><dd className="text-right font-semibold text-foreground">{value}</dd></div>;
+  return (
+    <div className="flex items-start justify-between gap-4">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="text-right font-semibold text-foreground">{value}</dd>
+    </div>
+  );
 }
 
-function Field({ label, error, children }: { label: string; error: string | undefined; children: React.ReactNode }) {
-  return <div><label className="mb-2 block text-sm font-semibold text-foreground">{label}</label>{children}{error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}</div>;
+function Field({
+  label,
+  error,
+  children,
+}: {
+  label: string;
+  error: string | undefined;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <label className="mb-2 block text-sm font-semibold text-foreground">{label}</label>
+      {children}
+      {error && <p className="mt-1.5 text-xs text-destructive">{error}</p>}
+    </div>
+  );
 }

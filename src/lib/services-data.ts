@@ -195,4 +195,3 @@ export const serviceDetails = {
 } as const satisfies Record<string, ServiceDetail>;
 
 export type ServiceSlug = keyof typeof serviceDetails;
-

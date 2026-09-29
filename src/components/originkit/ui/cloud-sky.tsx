@@ -1,32 +1,32 @@
 // Cloud Sky — Originkit
 // @ts-nocheck
 
-"use client"
+"use client";
 
-import * as React from "react"
-import { useEffect, useRef } from "react"
+import * as React from "react";
+import { useEffect, useRef } from "react";
 
-const MAX_DPR = 2
+const MAX_DPR = 2;
 
-const PUFF_UP = 0.34
-const PUFF_DOWN = 0.19
-const ERODE = 0.7
-const SHADOW_STEP = 0.085
-const NEAR_CELL = 1.05
-const FAR_CELL = 2.15
-const FAR_MIX = 0.55
-const NEAR_DRIFT = 0.055
-const FAR_DRIFT = 0.026
-const CIRRUS_DRIFT = 0.014
+const PUFF_UP = 0.34;
+const PUFF_DOWN = 0.19;
+const ERODE = 0.7;
+const SHADOW_STEP = 0.085;
+const NEAR_CELL = 1.05;
+const FAR_CELL = 2.15;
+const FAR_MIX = 0.55;
+const NEAR_DRIFT = 0.055;
+const FAR_DRIFT = 0.026;
+const CIRRUS_DRIFT = 0.014;
 
-const PUFF_WMAX = 2.15
+const PUFF_WMAX = 2.15;
 
-const SHADE_BLEND = 12.0
+const SHADE_BLEND = 12.0;
 
 const VERT_SRC = `
 attribute vec2 a_pos;
 void main(){ gl_Position = vec4(a_pos, 0.0, 1.0); }
-`
+`;
 
 const FRAG_SRC = `
 #ifdef GL_FRAGMENT_PRECISION_HIGH
@@ -167,81 +167,88 @@ void main(){
 
   gl_FragColor = vec4(col, 1.0);
 }
-`
+`;
 
 function compile(gl: WebGLRenderingContext, type: number, src: string): WebGLShader | null {
-  const sh = gl.createShader(type)
-  if (!sh) return null
-  gl.shaderSource(sh, src)
-  gl.compileShader(sh)
+  const sh = gl.createShader(type);
+  if (!sh) return null;
+  gl.shaderSource(sh, src);
+  gl.compileShader(sh);
   if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) {
-    console.error("CloudSky shader:", gl.getShaderInfoLog(sh))
-    gl.deleteShader(sh)
-    return null
+    console.error("CloudSky shader:", gl.getShaderInfoLog(sh));
+    gl.deleteShader(sh);
+    return null;
   }
-  return sh
+  return sh;
 }
 
-type RGBA = [number, number, number, number]
+type RGBA = [number, number, number, number];
 
 function parseColor(input: string | undefined, fb: RGBA): RGBA {
-  if (!input) return fb
-  const str = String(input).trim()
+  if (!input) return fb;
+  const str = String(input).trim();
   if (str.charAt(0) === "#") {
-    let hex = str.slice(1)
+    let hex = str.slice(1);
     if (hex.length === 3 || hex.length === 4) {
-      hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2] + (hex.length === 4 ? hex[3] + hex[3] : "")
+      hex =
+        hex[0] +
+        hex[0] +
+        hex[1] +
+        hex[1] +
+        hex[2] +
+        hex[2] +
+        (hex.length === 4 ? hex[3] + hex[3] : "");
     }
     if (hex.length >= 6) {
-      const r = parseInt(hex.slice(0, 2), 16)
-      const g = parseInt(hex.slice(2, 4), 16)
-      const b = parseInt(hex.slice(4, 6), 16)
-      const a = hex.length >= 8 ? parseInt(hex.slice(6, 8), 16) / 255 : 1
-      if (!isNaN(r) && !isNaN(g) && !isNaN(b)) return [r / 255, g / 255, b / 255, a]
+      const r = parseInt(hex.slice(0, 2), 16);
+      const g = parseInt(hex.slice(2, 4), 16);
+      const b = parseInt(hex.slice(4, 6), 16);
+      const a = hex.length >= 8 ? parseInt(hex.slice(6, 8), 16) / 255 : 1;
+      if (!isNaN(r) && !isNaN(g) && !isNaN(b)) return [r / 255, g / 255, b / 255, a];
     }
-    return fb
+    return fb;
   }
-  const m = str.match(/[\d.]+/g)
+  const m = str.match(/[\d.]+/g);
   if (m && m.length >= 3) {
     return [
       Math.min(255, parseFloat(m[0])) / 255,
       Math.min(255, parseFloat(m[1])) / 255,
       Math.min(255, parseFloat(m[2])) / 255,
       m.length >= 4 ? Math.min(1, parseFloat(m[3])) : 1,
-    ]
+    ];
   }
-  return fb
+  return fb;
 }
 
 function num(v: unknown, fb: number): number {
-  return typeof v === "number" && isFinite(v) ? v : fb
+  return typeof v === "number" && isFinite(v) ? v : fb;
 }
 
 function clampN(v: number, lo: number, hi: number): number {
-  return v < lo ? lo : v > hi ? hi : v
+  return v < lo ? lo : v > hi ? hi : v;
 }
 
-type Clouds = { softness?: number; shadow?: number; cirrus?: number }
-type Sun = { x?: number; y?: number; glow?: string }
-type Pointer = { parallax?: number; wind?: number; damping?: number }
+type Clouds = { softness?: number; shadow?: number; cirrus?: number };
+type Sun = { x?: number; y?: number; glow?: string };
+type Pointer = { parallax?: number; wind?: number; damping?: number };
 
-const CLOUD_DEFAULTS: Required<Clouds> = { softness: 100, shadow: 100, cirrus: 45 }
-const SUN_DEFAULTS: Required<Sun> = { x: 78, y: 92, glow: "rgba(232, 243, 255, 0.9)" }
-const POINTER_DEFAULTS: Required<Pointer> = { parallax: 100, wind: 100, damping: 20 }
+const CLOUD_DEFAULTS: Required<Clouds> = { softness: 100, shadow: 100, cirrus: 45 };
+const SUN_DEFAULTS: Required<Sun> = { x: 78, y: 92, glow: "rgba(232, 243, 255, 0.9)" };
+const POINTER_DEFAULTS: Required<Pointer> = { parallax: 100, wind: 100, damping: 20 };
 
 interface Props {
-  style?: React.CSSProperties
-  width?: number
-  height?: number
-  background?: string
-  baseColor?: string
-  accentColor?: string
-  density?: number
-  speed?: number
-  size?: number
-  clouds?: Clouds
-  sun?: Sun
-  pointer?: Pointer
+  style?: React.CSSProperties;
+  width?: number;
+  height?: number;
+  background?: string;
+  baseColor?: string;
+  accentColor?: string;
+  density?: number;
+  speed?: number;
+  size?: number;
+  clouds?: Clouds;
+  sun?: Sun;
+  pointer?: Pointer;
 }
 
 function __OriginkitBase_CloudSky(props: Props) {
@@ -258,17 +265,17 @@ function __OriginkitBase_CloudSky(props: Props) {
     pointer,
     width,
     height,
-  } = props
+  } = props;
 
-  const clouds_ = { ...CLOUD_DEFAULTS, ...(clouds || {}) }
-  const sun_ = { ...SUN_DEFAULTS, ...(sun || {}) }
-  const pointer_ = { ...POINTER_DEFAULTS, ...(pointer || {}) }
+  const clouds_ = { ...CLOUD_DEFAULTS, ...(clouds || {}) };
+  const sun_ = { ...SUN_DEFAULTS, ...(sun || {}) };
+  const pointer_ = { ...POINTER_DEFAULTS, ...(pointer || {}) };
 
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const sizeRef = useRef({ w: 0, h: 0 })
-  sizeRef.current = { w: num(width, 0), h: num(height, 0) }
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sizeRef = useRef({ w: 0, h: 0 });
+  sizeRef.current = { w: num(width, 0), h: num(height, 0) };
 
-  const vRef = useRef<Record<string, number | string>>({})
+  const vRef = useRef<Record<string, number | string>>({});
   vRef.current = {
     zenith: background,
     horizon: baseColor,
@@ -285,131 +292,135 @@ function __OriginkitBase_CloudSky(props: Props) {
     parallax: clampN(num(pointer_.parallax, 100), 0, 300) / 100,
     wind: clampN(num(pointer_.wind, 100), 0, 300) / 100,
     damping: clampN(num(pointer_.damping, 20), 1, 100),
-  }
+  };
 
-  const ptrRef = useRef({ x: 0, y: 0, inside: false })
+  const ptrRef = useRef({ x: 0, y: 0, inside: false });
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const gl = canvas.getContext("webgl", { alpha: false, antialias: false, depth: false })
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const gl = canvas.getContext("webgl", { alpha: false, antialias: false, depth: false });
     if (!gl) {
-      console.error("CloudSky: WebGL unavailable")
-      return
+      console.error("CloudSky: WebGL unavailable");
+      return;
     }
 
-    const vs = compile(gl, gl.VERTEX_SHADER, VERT_SRC)
-    const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG_SRC)
-    if (!vs || !fs) return
-    const prog = gl.createProgram()
-    if (!prog) return
-    gl.attachShader(prog, vs)
-    gl.attachShader(prog, fs)
-    gl.linkProgram(prog)
+    const vs = compile(gl, gl.VERTEX_SHADER, VERT_SRC);
+    const fs = compile(gl, gl.FRAGMENT_SHADER, FRAG_SRC);
+    if (!vs || !fs) return;
+    const prog = gl.createProgram();
+    if (!prog) return;
+    gl.attachShader(prog, vs);
+    gl.attachShader(prog, fs);
+    gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      console.error("CloudSky link:", gl.getProgramInfoLog(prog))
-      return
+      console.error("CloudSky link:", gl.getProgramInfoLog(prog));
+      return;
     }
-    gl.useProgram(prog)
+    gl.useProgram(prog);
 
-    const buf = gl.createBuffer()
-    gl.bindBuffer(gl.ARRAY_BUFFER, buf)
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW)
-    const aPos = gl.getAttribLocation(prog, "a_pos")
-    gl.enableVertexAttribArray(aPos)
-    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0)
+    const buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+    const aPos = gl.getAttribLocation(prog, "a_pos");
+    gl.enableVertexAttribArray(aPos);
+    gl.vertexAttribPointer(aPos, 2, gl.FLOAT, false, 0, 0);
 
-    const locs: Record<string, WebGLUniformLocation | null> = {}
+    const locs: Record<string, WebGLUniformLocation | null> = {};
     const u = (name: string) => {
-      if (!(name in locs)) locs[name] = gl.getUniformLocation(prog, name)
-      return locs[name]
-    }
+      if (!(name in locs)) locs[name] = gl.getUniformLocation(prog, name);
+      return locs[name];
+    };
 
-    let raf = 0
-    let last = performance.now()
+    let raf = 0;
+    let last = performance.now();
 
-    let nearX = 0
-    let farX = 0
-    let cirrusX = 0
-    let leanX = 0
-    let leanY = 0
+    let nearX = 0;
+    let farX = 0;
+    let cirrusX = 0;
+    let leanX = 0;
+    let leanY = 0;
 
     const render = (now: number) => {
-      const dt = Math.min(0.05, (now - last) / 1000)
-      last = now
-      const v = vRef.current
-      const p = ptrRef.current
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const v = vRef.current;
+      const p = ptrRef.current;
 
-      const k = 1 - Math.exp(-(v.damping as number) * 0.12 * dt)
-      leanX += ((p.inside ? p.x : 0) - leanX) * k
-      leanY += ((p.inside ? p.y : 0) - leanY) * k
+      const k = 1 - Math.exp(-(v.damping as number) * 0.12 * dt);
+      leanX += ((p.inside ? p.x : 0) - leanX) * k;
+      leanY += ((p.inside ? p.y : 0) - leanY) * k;
 
-      const gust = 1 + leanX * (v.wind as number)
-      const rate = (v.speed as number) * gust
-      nearX = (nearX - NEAR_DRIFT * rate * dt) % 1000
-      farX = (farX - FAR_DRIFT * rate * dt) % 1000
-      cirrusX = (cirrusX - CIRRUS_DRIFT * rate * dt) % 1000
+      const gust = 1 + leanX * (v.wind as number);
+      const rate = (v.speed as number) * gust;
+      nearX = (nearX - NEAR_DRIFT * rate * dt) % 1000;
+      farX = (farX - FAR_DRIFT * rate * dt) % 1000;
+      cirrusX = (cirrusX - CIRRUS_DRIFT * rate * dt) % 1000;
 
-      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR)
-      const cw = sizeRef.current.w || canvas.clientWidth || 1200
-      const ch = sizeRef.current.h || canvas.clientHeight || 800
-      const bw = Math.max(1, Math.round(cw * dpr))
-      const bh = Math.max(1, Math.round(ch * dpr))
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      const cw = sizeRef.current.w || canvas.clientWidth || 1200;
+      const ch = sizeRef.current.h || canvas.clientHeight || 800;
+      const bw = Math.max(1, Math.round(cw * dpr));
+      const bh = Math.max(1, Math.round(ch * dpr));
       if (canvas.width !== bw || canvas.height !== bh) {
-        canvas.width = bw
-        canvas.height = bh
+        canvas.width = bw;
+        canvas.height = bh;
       }
-      gl.viewport(0, 0, bw, bh)
+      gl.viewport(0, 0, bw, bh);
 
-      const zen = parseColor(v.zenith as string, [0.369, 0.576, 0.824, 1])
-      const hor = parseColor(v.horizon as string, [0.706, 0.824, 0.941, 1])
-      const cld = parseColor(v.cloud as string, [1, 1, 1, 1])
-      const glow = parseColor(v.glow as string, [0.91, 0.953, 1, 0.9])
+      const zen = parseColor(v.zenith as string, [0.369, 0.576, 0.824, 1]);
+      const hor = parseColor(v.horizon as string, [0.706, 0.824, 0.941, 1]);
+      const cld = parseColor(v.cloud as string, [1, 1, 1, 1]);
+      const glow = parseColor(v.glow as string, [0.91, 0.953, 1, 0.9]);
 
-      gl.uniform2f(u("uRes"), bw, bh)
-      gl.uniform1f(u("uNearX"), nearX)
-      gl.uniform1f(u("uFarX"), farX)
-      gl.uniform1f(u("uCirrusX"), cirrusX)
-      gl.uniform1f(u("uCoverage"), v.coverage as number)
-      gl.uniform1f(u("uSize"), v.size as number)
-      gl.uniform1f(u("uSoftness"), v.softness as number)
-      gl.uniform1f(u("uShadow"), v.shadow as number)
-      gl.uniform1f(u("uCirrus"), v.cirrus as number)
-      gl.uniform2f(u("uSun"), v.sunX as number, v.sunY as number)
-      gl.uniform2f(u("uParallax"), -leanX * (v.parallax as number) * 0.07, -leanY * (v.parallax as number) * 0.05)
-      gl.uniform3f(u("uZenith"), zen[0], zen[1], zen[2])
-      gl.uniform3f(u("uHorizon"), hor[0], hor[1], hor[2])
-      gl.uniform3f(u("uCloud"), cld[0], cld[1], cld[2])
-      gl.uniform4f(u("uGlow"), glow[0], glow[1], glow[2], glow[3])
+      gl.uniform2f(u("uRes"), bw, bh);
+      gl.uniform1f(u("uNearX"), nearX);
+      gl.uniform1f(u("uFarX"), farX);
+      gl.uniform1f(u("uCirrusX"), cirrusX);
+      gl.uniform1f(u("uCoverage"), v.coverage as number);
+      gl.uniform1f(u("uSize"), v.size as number);
+      gl.uniform1f(u("uSoftness"), v.softness as number);
+      gl.uniform1f(u("uShadow"), v.shadow as number);
+      gl.uniform1f(u("uCirrus"), v.cirrus as number);
+      gl.uniform2f(u("uSun"), v.sunX as number, v.sunY as number);
+      gl.uniform2f(
+        u("uParallax"),
+        -leanX * (v.parallax as number) * 0.07,
+        -leanY * (v.parallax as number) * 0.05,
+      );
+      gl.uniform3f(u("uZenith"), zen[0], zen[1], zen[2]);
+      gl.uniform3f(u("uHorizon"), hor[0], hor[1], hor[2]);
+      gl.uniform3f(u("uCloud"), cld[0], cld[1], cld[2]);
+      gl.uniform4f(u("uGlow"), glow[0], glow[1], glow[2], glow[3]);
 
-      gl.drawArrays(gl.TRIANGLES, 0, 3)
-      raf = requestAnimationFrame(render)
-    }
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      raf = requestAnimationFrame(render);
+    };
 
     const track = (e: PointerEvent) => {
-      const r = canvas.getBoundingClientRect()
-      if (r.width <= 0 || r.height <= 0) return
-      ptrRef.current.x = ((e.clientX - r.left) / r.width) * 2 - 1
-      ptrRef.current.y = 1 - ((e.clientY - r.top) / r.height) * 2
-      ptrRef.current.inside = true
-    }
+      const r = canvas.getBoundingClientRect();
+      if (r.width <= 0 || r.height <= 0) return;
+      ptrRef.current.x = ((e.clientX - r.left) / r.width) * 2 - 1;
+      ptrRef.current.y = 1 - ((e.clientY - r.top) / r.height) * 2;
+      ptrRef.current.inside = true;
+    };
     const onLeave = () => {
-      ptrRef.current.inside = false
-    }
+      ptrRef.current.inside = false;
+    };
 
-    canvas.addEventListener("pointermove", track)
-    canvas.addEventListener("pointerenter", track)
-    canvas.addEventListener("pointerleave", onLeave)
+    canvas.addEventListener("pointermove", track);
+    canvas.addEventListener("pointerenter", track);
+    canvas.addEventListener("pointerleave", onLeave);
 
-    raf = requestAnimationFrame(render)
+    raf = requestAnimationFrame(render);
 
     return () => {
-      cancelAnimationFrame(raf)
-      canvas.removeEventListener("pointermove", track)
-      canvas.removeEventListener("pointerenter", track)
-      canvas.removeEventListener("pointerleave", onLeave)
-    }
-  }, [])
+      cancelAnimationFrame(raf);
+      canvas.removeEventListener("pointermove", track);
+      canvas.removeEventListener("pointerenter", track);
+      canvas.removeEventListener("pointerleave", onLeave);
+    };
+  }, []);
 
   return (
     <div
@@ -430,27 +441,29 @@ function __OriginkitBase_CloudSky(props: Props) {
         style={{ position: "absolute", inset: 0, width: "100%", height: "100%", display: "block" }}
       />
     </div>
-  )
+  );
 }
 
 const __originkitPresetProps = {
-  "clouds": {
-    "cirrus": 100,
-    "shadow": 70,
-    "softness": 200
+  clouds: {
+    cirrus: 100,
+    shadow: 70,
+    softness: 200,
   },
-  "sun": {
-    "x": 100,
-    "y": 100,
-    "glow": "#FFFFFF"
+  sun: {
+    x: 100,
+    y: 100,
+    glow: "#FFFFFF",
   },
-  "pointer": {
-    "wind": 300,
-    "damping": 50,
-    "parallax": 300
-  }
+  pointer: {
+    wind: 300,
+    damping: 50,
+    parallax: 300,
+  },
 };
 
 export default function CloudSky(props: Record<string, unknown>) {
-  return <__OriginkitBase_CloudSky {...(__originkitPresetProps as Record<string, unknown>)} {...props} />;
+  return (
+    <__OriginkitBase_CloudSky {...(__originkitPresetProps as Record<string, unknown>)} {...props} />
+  );
 }
