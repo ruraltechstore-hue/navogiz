@@ -230,7 +230,7 @@ function IntroSection() {
     <section className="relative min-h-[95vh] py-32 px-6 bg-background text-center flex flex-col justify-center items-center overflow-hidden">
 
       {/* Top Header placed behind folder */}
-      <div className="relative z-0 w-full flex flex-col items-center pointer-events-none mt-16 md:mt-28">
+      <div ref={textRef} className="relative z-0 w-full flex flex-col items-center pointer-events-none mt-16 md:mt-28">
         {/* <p className="font-mono text-sm font-bold tracking-widest text-foreground/40 uppercase mb-4">
           What we do
         </p> */}
@@ -264,7 +264,6 @@ function IntroSection() {
 
       {/* Tightly packed bottom text */}
       <motion.div
-        ref={textRef}
         initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
         whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
