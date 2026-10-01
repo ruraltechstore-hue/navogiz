@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowRight, MousePointerClick, MoveUpRight, Navigation, Target, Zap } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, useInView } from "framer-motion";
 import CloudSky from "@/components/originkit/ui/cloud-sky";
 import FolderFloat from "@/components/FolderFloat";
 
@@ -93,14 +93,14 @@ function HeroSection() {
         }}
         transition={{ type: "spring", stiffness: 50, damping: 20 }}
       >
-        <motion.p
+        {/* <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           className="mb-6 font-mono text-sm font-bold tracking-[0.2em] text-primary"
         >
           NAVOGIZ
-        </motion.p>
+        </motion.p> */}
 
         <h1 className="font-display text-5xl font-extrabold leading-[0.95] tracking-tight text-white md:text-7xl lg:text-[7rem]">
           <span className="block flex flex-wrap items-center">WE <div className="inline-grid w-[220px] sm:w-[300px] md:w-[450px] overflow-hidden ml-2 sm:ml-4">
@@ -136,9 +136,9 @@ function HeroSection() {
           transition={{ duration: 0.8, delay: 0.8 }}
           className="mt-12 flex flex-wrap gap-5 pointer-events-auto"
         >
-          <Link to="/services" className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-white px-8 py-4 font-semibold text-black transition-all hover:scale-105 hover:text-white">
+          <Link to="/services" className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-primary px-8 py-4 font-semibold text-white transition-all hover:scale-105 hover:text-black">
             <span className="relative z-10 flex items-center gap-2">Explore Services <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
-            <div className="absolute inset-0 z-0 scale-x-0 bg-primary transition-transform duration-500 origin-left group-hover:scale-x-100" />
+            <div className="absolute inset-0 z-0 scale-x-0 bg-white transition-transform duration-500 origin-left group-hover:scale-x-100" />
           </Link>
           <Link to="/contact" className="group inline-flex items-center justify-center rounded-full border border-white/20 bg-white/5 px-8 py-4 font-semibold text-white backdrop-blur-md transition-all hover:bg-white/10 hover:border-white/40">
             Start a Conversation
@@ -214,6 +214,17 @@ function IntroSection() {
   const isMobile = useIsMobile();
   const { scrollYProgress } = useScroll();
   const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const textRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(textRef, { once: true, margin: "-100px" });
+  const [demoHover, setDemoHover] = useState(false);
+
+  useEffect(() => {
+    if (isInView) {
+      setDemoHover(true);
+      const t = setTimeout(() => setDemoHover(false), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [isInView]);
 
   return (
     <section className="relative min-h-[95vh] py-32 px-6 bg-background text-center flex flex-col justify-center items-center overflow-hidden">
@@ -245,6 +256,7 @@ function IntroSection() {
               ]}
               label="Navogiz Solutions"
               sublabel="4 core services"
+              forceOpen={demoHover}
             />
           </motion.div>
         </div>
@@ -252,6 +264,7 @@ function IntroSection() {
 
       {/* Tightly packed bottom text */}
       <motion.div
+        ref={textRef}
         initial={{ opacity: 0, filter: "blur(10px)", y: 20 }}
         whileInView={{ opacity: 1, filter: "blur(0px)", y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
@@ -307,26 +320,34 @@ function ServicesSection() {
         </h2>
 
         <div className="mt-20 flex flex-col gap-6">
-          {services.map((svc) => (
-            <Link key={svc.id} to={svc.href as any} className="group relative block overflow-hidden rounded-3xl bg-background p-8 md:p-12 transition-all duration-500 hover:bg-primary/5 hover:scale-[1.02] border border-border">
-              <div className="absolute right-12 top-1/2 -translate-y-1/2 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-4">
-                <div className="flex size-16 items-center justify-center rounded-full bg-primary text-white">
-                  <MoveUpRight className="size-8" />
+          {services.map((svc, i) => (
+            <motion.div
+              key={svc.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.6, delay: i * 0.15 }}
+            >
+              <Link to={svc.href as any} className="group relative block overflow-hidden rounded-3xl bg-background p-8 md:p-12 transition-all duration-500 hover:bg-primary/5 hover:scale-[1.02] border border-border h-full">
+                <div className="absolute right-12 top-1/2 -translate-y-1/2 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-4">
+                  <div className="flex size-16 items-center justify-center rounded-full bg-primary text-white">
+                    <MoveUpRight className="size-8" />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-24 relative z-10">
-                <div className="font-mono text-6xl font-black text-foreground/10 transition-colors duration-500 group-hover:text-primary/30">
-                  {svc.id}
+                <div className="flex flex-col md:flex-row md:items-center gap-8 md:gap-24 relative z-10">
+                  <div className="font-mono text-6xl font-black text-foreground/10 transition-colors duration-500 group-hover:text-primary/30">
+                    {svc.id}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-mono text-sm font-bold tracking-widest text-primary uppercase mb-4">{svc.title}</h3>
+                    <h4 className="font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl">{svc.headline}</h4>
+                    <p className="mt-4 max-w-lg text-lg text-foreground/70 opacity-0 -translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+                      {svc.desc}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <h3 className="font-mono text-sm font-bold tracking-widest text-primary uppercase mb-4">{svc.title}</h3>
-                  <h4 className="font-display text-4xl font-bold tracking-tight text-foreground md:text-5xl">{svc.headline}</h4>
-                  <p className="mt-4 max-w-lg text-lg text-foreground/70 opacity-0 -translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
-                    {svc.desc}
-                  </p>
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>
@@ -359,11 +380,21 @@ function ScrollStorySection() {
           <h2 className="font-display text-6xl font-black md:text-9xl tracking-tighter">ATTENTION<br />ISN'T THE GOAL.</h2>
         </motion.div>
 
-        <motion.div style={{ opacity: opacity2, y: y2, display: display2 as any }} className="col-start-1 row-start-1 w-full text-center">
+        <motion.div style={{ opacity: opacity2, y: y2, display: display2 as any }} className="col-start-1 row-start-1 w-full text-center relative z-10">
+          <motion.div
+            className="absolute inset-0 mx-auto w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-[40%_60%_70%_30%/40%_50%_60%_50%] bg-primary/20 blur-[60px] md:blur-[100px] mix-blend-screen -z-10"
+            animate={{ rotate: [0, 180, 360], scale: [0.8, 1.1, 0.8] }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          />
           <h2 className="font-display text-6xl font-black md:text-9xl tracking-tighter text-primary">TRACTION IS.</h2>
         </motion.div>
 
-        <motion.div style={{ opacity: opacity3, y: y3 }} className="col-start-1 row-start-1 w-full text-center">
+        <motion.div style={{ opacity: opacity3, y: y3 }} className="col-start-1 row-start-1 w-full text-center relative z-10">
+          <motion.div
+            className="absolute inset-0 mx-auto w-[300px] h-[300px] md:w-[600px] md:h-[600px] rounded-[60%_40%_30%_70%/60%_30%_70%_40%] bg-blue-500/20 blur-[60px] md:blur-[100px] mix-blend-screen -z-10"
+            animate={{ rotate: [360, 180, 0], scale: [1, 1.2, 1] }}
+            transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+          />
           <h2 className="font-display text-6xl font-black md:text-9xl tracking-tighter text-primary">RESULTS ARE.</h2>
         </motion.div>
       </div>
@@ -477,18 +508,20 @@ function ProcessSection() {
 
 function BigCTASection() {
   return (
-    <section className="relative overflow-hidden bg-foreground py-40 px-6 text-background text-center">
-      <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(22,131,255,0.15),transparent_50%)]" />
-      <div className="relative z-10 mx-auto max-w-4xl">
-        <h2 className="font-display text-6xl font-black tracking-tighter md:text-9xl">READY TO <br /> MOVE?</h2>
-        <p className="mt-8 text-2xl opacity-70">Tell us what you're building.</p>
+    <div className="px-4 pb-4 md:px-6 md:pb-6">
+      <section className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3rem] bg-foreground py-40 px-6 text-background text-center">
+        <div className="absolute inset-0 z-0 bg-[radial-gradient(circle_at_center,rgba(22,131,255,0.15),transparent_50%)]" />
+        <div className="relative z-10 mx-auto max-w-4xl">
+          <h2 className="font-display text-6xl font-black tracking-tighter md:text-9xl">READY TO <br /> MOVE?</h2>
+          <p className="mt-8 text-2xl opacity-70">Tell us what you're building.</p>
 
-        <div className="mt-16">
-          <Link to="/contact" className="group inline-flex items-center justify-center rounded-full bg-primary px-10 py-6 font-semibold text-white transition-all hover:scale-110 hover:bg-white hover:text-primary">
-            Start a Conversation <ArrowRight className="ml-3 size-5 transition-transform group-hover:translate-x-2" />
-          </Link>
+          <div className="mt-16">
+            <Link to="/contact" className="group inline-flex items-center justify-center rounded-full bg-primary px-10 py-6 font-semibold text-white transition-all hover:scale-110 hover:bg-white hover:text-primary">
+              Start a Conversation <ArrowRight className="ml-3 size-5 transition-transform group-hover:translate-x-2" />
+            </Link>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
